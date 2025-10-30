@@ -1,0 +1,21 @@
+
+type Student {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String!
+    college: College
+}
+
+type College {
+     id: ID!
+     name: String!
+     location: String!
+     rating: Float!
+}
+
+type Query {
+    hello: String
+    students: [Student]
+}
