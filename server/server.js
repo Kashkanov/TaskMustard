@@ -1,29 +1,47 @@
 const express = require('express');
-const { ApolloServer } = require("@apollo/server");
-const { expressMiddleware } = require('@apollo/server/express4');
+const {ApolloServer} = require("@apollo/server");
+const {expressMiddleware} = require('@apollo/server/express4');
 const fs = require("node:fs");
-const typeDefs = fs.readFileSync('./schema.graphql', {encoding:'utf-8'});
+const typeDefs = fs.readFileSync('./schema.graphql', {encoding: 'utf-8'});
 const resolvers = require('./resolvers');
+const taskServices = require('./sql/tasks/taskServices')
 
 async function init() {
     const app = express();
     app.use(express.json());
     const PORT = process.env.PORT || 8000;
 
-    const gqlServer = new ApolloServer({
-        typeDefs,
-        resolvers
+    app.use((req, res, next) => {
+        console.log(`${req.method} ${req.path}`);
+        next();
     });
 
-    await gqlServer.start();
+    app.use((req, res, next)=>{
+        res.header("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
+        res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.header("Access-Control-Allow-Credentials", "true");
 
-    app.get("/", (req, res) => {
-        res.json({message: "Server is up and running!"});
-    });
+        next();
+    })
 
-    app.use('/graphql', expressMiddleware(gqlServer));
+    // const gqlServer = new ApolloServer({
+    //     typeDefs,
+    //     resolvers
+    // });
+    //
+    // await gqlServer.start();
+    //
+    // app.get("/", (req, res) => {
+    //     res.json({message: "Server is up and running!"});
+    // });
+    //
+    // app.use('/graphql', expressMiddleware(gqlServer));
+    //
 
-    app.listen(PORT, () => console.log(`Server started on http://localhost:${PORT}/graphql`));
+    app.use("/tasks", taskServices);
+
+    app.listen(PORT, () => console.log(`Server started on http://localhost:${PORT}/tasks/`));
 }
 
 init();
