@@ -4,7 +4,40 @@ import {useEffect, useState} from "react";
 import Editor from "../components/Editor.tsx";
 import {useForm} from "react-hook-form";
 import type {taskType} from "../types/taskType.ts";
-import {createTask} from "../taskServices.ts";
+// import {createTask} from "../services/taskServices.ts";
+import {gql} from "@apollo/client";
+import {useMutation} from "@apollo/client/react";
+import type {priorityType} from "../types/priorityType.ts";
+import type {categoryType} from "../types/categoryType.ts";
+
+const CREATE_TASK = gql`
+    mutation CreateTask($tasktitle: String!, $taskdescription: String, $startdatetime: String!, $enddatetime: String,  $priorityid: Int!, $categoryid: Int!, $statusid: Int) {
+        createTask(tasktitle: $tasktitle, taskdescription: $taskdescription, startdatetime: $startdatetime, enddatetime: $enddatetime, priorityid: $priorityid, categoryid: $categoryid, statusid: $statusid) {
+            taskid
+            tasktitle
+            taskdescription
+            startdatetime
+            enddatetime
+            priorityid
+            categoryid
+            statusid
+        }
+    }
+`;
+
+const GET_CATEGORIES = gql`{
+    categories {
+        categoryid,
+        categoryname
+    } 
+}`;
+
+const GET_PRIORITIES = gql`{
+    priorities {
+        priorityid,
+        priorityname
+    }
+}`;
 
 const AddTask = () => {
 
@@ -17,11 +50,15 @@ const AddTask = () => {
     } = useForm<taskType>({
         mode: "all",
         defaultValues:{
-            priorityID: 3
+            priorityID: 3,
+            categoryID: 0
         }
     });
+    const [createTask, { loading, error }] = useMutation(CREATE_TASK)
 
     const [description, setDescription] = useState<string>("");
+    const [priority, setPriority] = useState<priorityType[]>([]);
+    const [category, setCategory] = useState<categoryType[]>([]);
 
     const handleDescriptionChange = (value: string) => {
         setDescription(value);
@@ -32,8 +69,18 @@ const AddTask = () => {
     const onSubmit = async (data: taskType) => {
         console.log(data);
         setValue("statusID", 1);        // set status to To-Do
-        const res = await createTask(data);
-        console.log(res);
+        // const res = await createTask(data);
+        // console.log(res);
+        createTask({
+            variables: {
+                tasktitle: data.taskTitle,
+                taskdescription: data.taskDescription,
+                startdatetime: data.startDateTime,
+                enddatetime: data.endDateTime,
+                priorityid: parseInt(data.priorityID),
+                categoryid: parseInt(data.categoryID),
+                statusid: data.statusID
+            } })
     }
 
     useEffect(() => {
@@ -61,7 +108,7 @@ const AddTask = () => {
                     </button>
                 </div>
 
-                <div className="flex flex-col justify-center text-start w-full h-[60px] text-start gap-y-1">
+                <div className="flex flex-col justify-center text-start w-full h-[60px] gap-y-1">
                     <input
                         {...register("taskTitle", {required: "Required"})}
                         className="w-full h-2/3 bg-white border-1 rounded-sm"
@@ -72,7 +119,7 @@ const AddTask = () => {
                     </label>
                 </div>
 
-                <div className="flex justify-between text-start w-full h-[60px] text-start gap-10">
+                <div className="flex justify-between text-start w-full h-[60px] gap-10">
                     <div className="flex flex-col w-1/2 h-full gap-y-1">
                         <input
                             {...register("startDateTime", {required: "Required"})}
@@ -95,7 +142,7 @@ const AddTask = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col justify-center text-start w-full h-[200px] text-start gap-y-1 my-5">
+                <div className="flex flex-col justify-center text-start w-full h-[200px] gap-y-1 my-5">
                     <label>
                         Description {errors.taskDescription && <span className="text-red-500 font-bold">{errors.taskDescription?.message}</span>}
                     </label>
@@ -105,16 +152,16 @@ const AddTask = () => {
                     />
                 </div>
 
-                <div className="flex justify-between text-start w-full h-[60px] text-start gap-10">
+                <div className="flex justify-between text-start w-full h-[60px] gap-10">
                     <div className="flex flex-col w-1/2 h-full gap-y-1">
                         <select
                             {...register("categoryID", {required: "Required"})}
                             className="w-full h-2/3 bg-white border-1 rounded-sm"
                         >
                             <option className="text-gray-300" selected hidden value="">--Select Category--</option>
-                            <option value="1">General</option>
-                            <option value="2">Chores</option>
-                            <option value="3">Work</option>
+                            <option value={1}>General</option>
+                            <option value={2}>Chores</option>
+                            <option value={3}>Work</option>
                         </select>
 
                         <label>
@@ -124,12 +171,13 @@ const AddTask = () => {
                     <div className="flex flex-col w-1/2 h-full gap-y-1">
                         <select
                             className="w-full h-2/3 bg-white border-1 rounded-sm"
+                            {...register("priorityID", {required: "Required"})}
                         >
-                            <option value="1">Lowest</option>
-                            <option value="2">Low</option>
-                            <option value="3" selected>Medium</option>
-                            <option value="4">High</option>
-                            <option value="5">Critical</option>
+                            <option value={1}>Lowest</option>
+                            <option value={2}>Low</option>
+                            <option value={3}>Medium</option>
+                            <option value={4}>High</option>
+                            <option value={5}>Critical</option>
                         </select>
 
                         <label

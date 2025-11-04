@@ -1,21 +1,39 @@
+scalar UUID
 
-type Student {
-    id: ID!
-    firstName: String!
-    lastName: String!
-    email: String!
-    password: String!
-    college: College
+type task {
+    taskid: UUID!
+    tasktitle: String!
+    taskdescription: String!
+    startdatetime: String!
+    enddatetime: String!
+    priorityid: Int!
+    categoryid: Int!
+    statusid: Int!
 }
 
-type College {
-     id: ID!
-     name: String!
-     location: String!
-     rating: Float!
+type category {
+    categoryid: Int!
+    categoryname: String!
 }
+ type priority {
+    priorityid: Int!
+    priorityname: String!
+ }
+
+ type status {
+    statusid: Int!
+    statusname: String!
+ }
 
 type Query {
     hello: String
-    students: [Student]
+    tasks: [task]
+    task(taskid: UUID!): task
+    categories: [category]
+    priorities: [priority]
+    statuses: [status]
+}
+
+type Mutation {
+    createTask(tasktitle: String!, taskdescription: String, startdatetime: String!, enddatetime: String, priorityid: Int!, categoryid: Int!, statusid: Int): task!
 }

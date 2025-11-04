@@ -9,6 +9,7 @@
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "graphql": "^16.11.0",
+    "graphql-scalars": "^1.25.0",
     "pg-promise": "^12.2.0"
   },
   "scripts": {

@@ -22,26 +22,30 @@ async function init() {
         res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
         res.header("Access-Control-Allow-Credentials", "true");
 
+        if (req.method === 'OPTIONS') {
+            return res.sendStatus(200);
+        }
+
         next();
     })
 
-    // const gqlServer = new ApolloServer({
-    //     typeDefs,
-    //     resolvers
-    // });
-    //
-    // await gqlServer.start();
-    //
-    // app.get("/", (req, res) => {
-    //     res.json({message: "Server is up and running!"});
-    // });
-    //
-    // app.use('/graphql', expressMiddleware(gqlServer));
-    //
+    const gqlServer = new ApolloServer({
+        typeDefs,
+        resolvers
+    });
 
-    app.use("/tasks", taskServices);
+    await gqlServer.start();
 
-    app.listen(PORT, () => console.log(`Server started on http://localhost:${PORT}/tasks/`));
+    app.get("/", (req, res) => {
+        res.json({message: "Server is up and running!"});
+    });
+
+    app.use('/graphql', expressMiddleware(gqlServer));
+
+
+    // app.use("/tasks", taskServices);
+
+    app.listen(PORT, () => console.log(`Server started on http://localhost:${PORT}/graphql`));
 }
 
 init();
