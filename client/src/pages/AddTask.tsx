@@ -6,9 +6,17 @@ import {useForm} from "react-hook-form";
 import type {taskType} from "../types/taskType.ts";
 // import {createTask} from "../services/taskServices.ts";
 import {gql} from "@apollo/client";
-import {useMutation} from "@apollo/client/react";
+import {useMutation, useQuery} from "@apollo/client/react";
 import type {priorityType} from "../types/priorityType.ts";
 import type {categoryType} from "../types/categoryType.ts";
+
+type GetPrioritiesData = {
+    priorities: priorityType[];
+};
+
+type GetCategoriesData = {
+    categories: categoryType[];
+};
 
 const CREATE_TASK = gql`
     mutation CreateTask($tasktitle: String!, $taskdescription: String, $startdatetime: String!, $enddatetime: String,  $priorityid: Int!, $categoryid: Int!, $statusid: Int) {
@@ -54,7 +62,9 @@ const AddTask = () => {
             categoryID: 0
         }
     });
-    const [createTask, { loading, error }] = useMutation(CREATE_TASK)
+    const [createTask, { loading: formLoading, error }] = useMutation(CREATE_TASK);
+    const { loading: categLoading, data: categData } = useQuery<GetCategoriesData>(GET_CATEGORIES);
+    const { loading: prioLoading, data: prioData} = useQuery<GetPrioritiesData>(GET_PRIORITIES);
 
     const [description, setDescription] = useState<string>("");
     const [priority, setPriority] = useState<priorityType[]>([]);
@@ -68,7 +78,7 @@ const AddTask = () => {
 
     const onSubmit = async (data: taskType) => {
         console.log(data);
-        setValue("statusID", 1);        // set status to To-Do
+        // setValue("statusID", 1);        // set status to To-Do
         // const res = await createTask(data);
         // console.log(res);
         createTask({
@@ -77,9 +87,9 @@ const AddTask = () => {
                 taskdescription: data.taskDescription,
                 startdatetime: data.startDateTime,
                 enddatetime: data.endDateTime,
-                priorityid: parseInt(data.priorityID),
-                categoryid: parseInt(data.categoryID),
-                statusid: data.statusID
+                priorityid: parseInt(data.priorityID.toString()),
+                categoryid: parseInt(data.categoryID.toString()),
+                statusid: 1
             } })
     }
 
@@ -94,6 +104,9 @@ const AddTask = () => {
 
     return (
         <div className="flex flex-col justify-center items-center max-w-7xl mx-auto px-4 py-8 bg-primary-100">
+            {categLoading || prioLoading ? (
+                <p>Loading...</p>
+            ) :  (
             <form
                 className="flex flex-col items-center justify-center w-5/6 h-5/6 bg-secondary-100 p-5 rounded-lg gap-y-5 shadow-lg"
                 onSubmit={handleSubmit(onSubmit)}
@@ -158,10 +171,17 @@ const AddTask = () => {
                             {...register("categoryID", {required: "Required"})}
                             className="w-full h-2/3 bg-white border-1 rounded-sm"
                         >
-                            <option className="text-gray-300" selected hidden value="">--Select Category--</option>
-                            <option value={1}>General</option>
-                            <option value={2}>Chores</option>
-                            <option value={3}>Work</option>
+                            <option className="text-gray-300" selected hidden value={0}>--Select Category--</option>
+                            { categData?.categories.map(category => (
+                                <option
+                                    key={category.categoryid}
+                                    value={category.categoryid}
+                                >
+                                    {category.categoryname}
+                                </option>
+                            ))
+
+                            }
                         </select>
 
                         <label>
@@ -173,11 +193,15 @@ const AddTask = () => {
                             className="w-full h-2/3 bg-white border-1 rounded-sm"
                             {...register("priorityID", {required: "Required"})}
                         >
-                            <option value={1}>Lowest</option>
-                            <option value={2}>Low</option>
-                            <option value={3}>Medium</option>
-                            <option value={4}>High</option>
-                            <option value={5}>Critical</option>
+                            { prioData?.priorities.map((priority) => (
+                                    <option
+                                        key={priority.priorityid}
+                                        value={priority.priorityid}
+                                    >
+                                        {priority.priorityname}
+                                    </option>
+                                ))
+                            }
                         </select>
 
                         <label
@@ -198,6 +222,7 @@ const AddTask = () => {
                 </div>
 
             </form>
+            )}
         </div>
     )
 }
