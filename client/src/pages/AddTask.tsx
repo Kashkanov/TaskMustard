@@ -1,14 +1,14 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import Editor from "../components/Editor.tsx";
 import {useForm} from "react-hook-form";
 import type {taskType} from "../types/taskType.ts";
-// import {createTask} from "../services/taskServices.ts";
 import {gql} from "@apollo/client";
 import {useMutation, useQuery} from "@apollo/client/react";
 import type {priorityType} from "../types/priorityType.ts";
 import type {categoryType} from "../types/categoryType.ts";
+import {useNavigate} from "react-router-dom";
 
 type GetPrioritiesData = {
     priorities: priorityType[];
@@ -49,6 +49,8 @@ const GET_PRIORITIES = gql`{
 
 const AddTask = () => {
 
+    const navigate = useNavigate();
+
     const {
         register,
         handleSubmit,
@@ -58,17 +60,19 @@ const AddTask = () => {
     } = useForm<taskType>({
         mode: "all",
         defaultValues:{
+            taskTitle: "",
+            taskDescription: "",
+            startDateTime: "",
+            endDateTime: null,
             priorityID: 3,
             categoryID: 0
         }
     });
-    const [createTask, { loading: formLoading, error }] = useMutation(CREATE_TASK);
+    const [createTask, { /*loading: formLoading,*/ error }] = useMutation(CREATE_TASK);
     const { loading: categLoading, data: categData } = useQuery<GetCategoriesData>(GET_CATEGORIES);
     const { loading: prioLoading, data: prioData} = useQuery<GetPrioritiesData>(GET_PRIORITIES);
 
     const [description, setDescription] = useState<string>("");
-    const [priority, setPriority] = useState<priorityType[]>([]);
-    const [category, setCategory] = useState<categoryType[]>([]);
 
     const handleDescriptionChange = (value: string) => {
         setDescription(value);
@@ -78,9 +82,6 @@ const AddTask = () => {
 
     const onSubmit = async (data: taskType) => {
         console.log(data);
-        // setValue("statusID", 1);        // set status to To-Do
-        // const res = await createTask(data);
-        // console.log(res);
         createTask({
             variables: {
                 tasktitle: data.taskTitle,
@@ -91,15 +92,21 @@ const AddTask = () => {
                 categoryid: parseInt(data.categoryID.toString()),
                 statusid: 1
             } })
+        if(error) {
+            console.log(error);
+        }else
+        {
+            navigate("/")
+        }
     }
 
-    useEffect(() => {
-        register("taskDescription", {
-            validate: (value) =>
-                value.replace(/<[^>]+>/g, "").trim().length > 0 ||
-                "Required"
-        });
-    }, [description]);
+    // useEffect(() => {
+    //     register("taskDescription", {
+    //         validate: (value) =>
+    //             value.replace(/<[^>]+>/g, "").trim().length > 0 ||
+    //             "Required"
+    //     });
+    // }, [description]);
 
 
     return (
@@ -145,7 +152,7 @@ const AddTask = () => {
                     </div>
                     <div className="flex flex-col w-1/2 h-full gap-y-1">
                         <input
-                            {...register("endDateTime", {required: "Required"})}
+                            {...register("endDateTime")}
                             className="w-full h-2/3 bg-white border-1 rounded-sm"
                             type="datetime-local"
                         />

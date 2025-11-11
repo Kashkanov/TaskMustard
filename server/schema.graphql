@@ -3,12 +3,15 @@ scalar UUID
 type task {
     taskid: UUID!
     tasktitle: String!
-    taskdescription: String!
+    taskdescription: String
     startdatetime: String!
-    enddatetime: String!
+    enddatetime: String
     priorityid: Int!
     categoryid: Int!
     statusid: Int!
+    priority: priority
+    category: category
+    status: status
 }
 
 type category {
@@ -25,9 +28,16 @@ type category {
     statusname: String!
  }
 
+type SuccessResponse {
+    success: Boolean!
+    message: String
+}
+
 type Query {
     hello: String
     tasks: [task]
+    todoTasks: [task]
+    ongoingTasks: [task]
     task(taskid: UUID!): task
     categories: [category]
     priorities: [priority]
@@ -35,5 +45,6 @@ type Query {
 }
 
 type Mutation {
-    createTask(tasktitle: String!, taskdescription: String, startdatetime: String!, enddatetime: String, priorityid: Int!, categoryid: Int!, statusid: Int): task!
+    createTask(tasktitle: String!, taskdescription: String, startdatetime: String!, enddatetime: String, priorityid: Int!, categoryid: Int!, statusid: Int): SuccessResponse!
+    changeTaskStatus(taskid: UUID!, statusid: Int!): SuccessResponse!
 }
