@@ -13,7 +13,7 @@ const Editor: FC<EditorPropsType> = ({content, handleContentChange}) => {
         toolbar: [
             [{ header: [1, 2, false] }],
             ['bold', 'italic', 'underline'],
-            [{ list: 'ordered' }, { list: 'bullet' }],
+            [{ list: 'ordered' }, { list: 'bullet' }, {list: 'check'}],
             ['link', 'image'],
         ],
     };

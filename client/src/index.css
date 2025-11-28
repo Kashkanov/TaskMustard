@@ -70,6 +70,13 @@ button:hover {
     --color-primary-100: #FFFFFF ;
     --color-primary-200: #FFF18B;
     --color-secondary-100: #EBEBEB;
+    --color-secondary-200: #F798A8;
+    --color-secondary-300: #ffa147;
+    --color-secondary-400: #fff18b;
+    --color-secondary-500: #c0faee;
+    --color-secondary-600: #78f4ec;
+    --color-secondary-700: #d3abe9;
+    --color-secondary-800: #ef99e2;
 }
 
 @media (prefers-color-scheme: light) {
@@ -115,10 +122,10 @@ input{
     min-height: 10rem;
     height: 9rem;
     background: white;
-    border-radius: 0 0 0.375rem 0.375rem;
 }
 
 .ql-toolbar {
     background-color: #f8f9fa;
     border-radius: 0.375rem 0.375rem 0 0;
 }
+

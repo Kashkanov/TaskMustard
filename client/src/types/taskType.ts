@@ -1,4 +1,4 @@
-export type taskType = {
+export interface taskType {
     taskTitle: string,
     taskDescription: string,
     startDateTime: string,
@@ -6,4 +6,5 @@ export type taskType = {
     categoryID: number,
     priorityID: number,
     statusID: number,
+    isFocus: boolean,
 }

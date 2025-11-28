@@ -2,7 +2,7 @@ import type {categoryType} from "./categoryType.ts";
 import type {priorityType} from "./priorityType.ts";
 import type {statusType} from "./statusType.ts";
 
-export interface taskPrevType {
+export interface completeTask {
     taskid: string,
     tasktitle: string,
     taskdescription: string,
@@ -11,4 +11,5 @@ export interface taskPrevType {
     category: categoryType,
     priority: priorityType,
     status: statusType
+    isfocus: boolean,
 }

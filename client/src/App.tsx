@@ -15,9 +15,9 @@ function App() {
 
     return (
         <ApolloProvider client={client}>
-            <div className="min-h-screen flex flex-col overflow-x-hidden">
+            <div className="min-h-screen flex flex-col overflow-x-hidden bg-gray-200">
                 <Navbar/>
-                <main className="flex-1">
+                <main className="flex-1 ">
                     <BrowserRouter>
                         <Routes>
                             <Route path="/" element={<Dashboard/>}/>

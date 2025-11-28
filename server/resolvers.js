@@ -16,7 +16,10 @@ const resolvers = {
             try {
                 return await db.any(`SELECT *
                                      FROM task
-                                     WHERE statusid = 1`, [true]);
+                                     WHERE statusid = 1
+                                       AND isfocus = false
+                                     ORDER BY enddatetime
+                                     LIMIT 5`, [true]);
             } catch (err) {
                 throw new Error(err.message);
             }
@@ -35,6 +38,15 @@ const resolvers = {
                 return await db.one(`SELECT *
                                      FROM task
                                      WHERE taskid = '${taskid}'`);
+            } catch (err) {
+                throw new Error(err.message);
+            }
+        },
+        focusedTask: async () => {
+            try {
+                return await db.one(`SELECT *
+                                     FROM task
+                                     WHERE isfocus = true`, [true]);
             } catch (err) {
                 throw new Error(err.message);
             }
@@ -66,29 +78,24 @@ const resolvers = {
             enddatetime,
             priorityid,
             categoryid,
-            statusid
+            statusid,
+            isfocus,
         }) => {
             try {
-                await db.one(`INSERT INTO task(tasktitle, taskdescription, startdatetime, enddatetime,
-                                                      priorityid, categoryid, statusid)
-                                     VALUES ($1, $2, $3, $4, $5, $6, $7)
-                                     RETURNING *`, [tasktitle, taskdescription, startdatetime, enddatetime, priorityid, categoryid, statusid]);
-                return {
-                    success: true,
-                    message: "Task created successfully"
-                }
+                const newTask = await db.one(`INSERT INTO task(tasktitle, taskdescription, startdatetime, enddatetime,
+                                                               priorityid, categoryid, statusid, isfocus)
+                                              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                                              RETURNING *`, [tasktitle, taskdescription, startdatetime, enddatetime, priorityid, categoryid, statusid, isfocus]);
+                return newTask;
             } catch (err) {
-                return {
-                    success: false,
-                    message: err.message
-                };
+                throw new Error(err.message);
             }
         },
         changeTaskStatus: async (_, {taskid, statusid}) => {
             try {
                 await db.none(`UPDATE task
-                                     SET statusid = '${statusid}'
-                                     WHERE taskid = '${taskid}'`);
+                               SET statusid = '${statusid}'
+                               WHERE taskid = '${taskid}'`);
                 return {
                     success: true,
                     message: "Status changed successfully"
@@ -98,6 +105,23 @@ const resolvers = {
                     success: false,
                     message: err.message
                 };
+            }
+        },
+        changeFocus: async (_, {taskid}) => {
+            try {
+                // set current focused task to false
+                await db.any(`UPDATE task
+                              SET isfocus = false
+                              WHERE isfocus = true`, [taskid]);
+                // set new task isfocus to true
+                const focusedTask = await db.one(`UPDATE task
+                                                  SET isfocus = true
+                                                  WHERE taskid = '${taskid}'
+                                                  RETURNING *`, [taskid]);
+                return focusedTask;
+
+            } catch(err){
+                throw new Error(err.message);
             }
         }
     },
@@ -112,27 +136,36 @@ const resolvers = {
         },
         category: async (task) => {
             try {
-                return await db.one(`SELECT *
-                                     FROM category
-                                     WHERE categoryid = '${task.categoryid}'`);
+                return await db.one(`
+                SELECT *
+                FROM
+                category
+                WHERE
+                categoryid = '${task.categoryid}'`);
             } catch (err) {
                 throw new Error(err.message);
             }
         },
         priority: async (task) => {
             try {
-                return await db.one(`SELECT *
-                                     FROM priority
-                                     WHERE priorityid = '${task.priorityid}'`);
+                return await db.one(`
+                SELECT *
+                FROM
+                priority
+                WHERE
+                priorityid = '${task.priorityid}'`);
             } catch (err) {
                 throw new Error(err.message);
             }
         },
         status: async (task) => {
             try {
-                return await db.one(`SELECT *
-                                     FROM status
-                                     WHERE statusid = '${task.statusid}'`);
+                return await db.one(`
+                SELECT *
+                FROM
+                status
+                WHERE
+                statusid = '${task.statusid}'`);
             } catch (err) {
                 throw new Error(err.message);
             }
