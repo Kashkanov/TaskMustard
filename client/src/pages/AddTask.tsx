@@ -105,12 +105,12 @@ const AddTask = () => {
 
 
     return (
-        <div className="flex flex-col justify-center items-center max-w-7xl mx-auto px-4 py-8 bg-primary-100">
+        <div className="flex flex-col justify-center items-center w-full mx-auto bg-gray-200 py-5 h-full">
             {categLoading || prioLoading ? (
                 <p>Loading...</p>
             ) : (
                 <form
-                    className="flex flex-col items-center justify-center w-5/6 h-5/6 bg-secondary-100 p-5 rounded-lg gap-y-5 shadow-lg"
+                    className="flex flex-col items-center justify-center w-2/3 h-4/6 bg-secondary-white rounded-lg gap-y-2 shadow-lg bg-white p-4"
                     onSubmit={handleSubmit(onSubmit)}
                 >
 

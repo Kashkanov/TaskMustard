@@ -38,8 +38,8 @@ const FocusedTask: FC<FocusedTaskProps> = ({task}) => {
                     {dateDiff(task.startdatetime, task.enddatetime)} remaining
                 </span>
                 <div className="w-1/8 pl-10 h-5/6">
-                    <button className="h-full w-full bg-secondary-800 font-bold text-white rounded-md">
-                        Done!
+                    <button className="h-full w-full bg-blue-600 hover:bg-blue-400 font-bold text-white rounded-md">
+                        I'm done
                     </button>
 
                 </div>

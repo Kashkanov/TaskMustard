@@ -13,6 +13,10 @@ type GetTaskFocusedData = {
     focusedTask: completeTask
 }
 
+type GetChangeTaskFocusedData = {
+    changeFocus: completeTask
+}
+
 const GET_TODO_TASKS = gql`
     query GetTodoTasks {
         todoTasks {
@@ -96,7 +100,7 @@ const Dashboard = () => {
     const {loading: todoLoading, data: todoData} = useQuery<GetTaskTodoPrevsData>(GET_TODO_TASKS);
     const {loading: focusedLoading, data: focusedTask} = useQuery<GetTaskFocusedData>(GET_FOCUSED_TASK);
 
-    const [changeFocus] = useMutation(CHANGE_FOCUSED_TASK, {
+    const [changeFocus] = useMutation<GetChangeTaskFocusedData>(CHANGE_FOCUSED_TASK, {
         update(cache, {data}) {
             if (!data?.changeFocus) return;
 
@@ -135,7 +139,7 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="flex flex-col justify-center items-center w-full mx-auto bg-gray-200 p-5">
+        <div className="flex flex-col justify-center items-center w-full mx-auto bg-gray-200 py-5 h-full">
             {focusedLoading ? (
                 <p>Loading...</p>
             ) : (
@@ -194,7 +198,7 @@ const Dashboard = () => {
                                     animate={{opacity: 1, x: 0}}
                                     exit={{opacity: 0, x: -50}}
                                     whileHover={{
-                                        scaleY: 1.2,
+                                        scaleY: 1.02,
                                         scaleX: 1.02,
                                         borderBottom: 0,
                                         backgroundColor: "#c0faee",
