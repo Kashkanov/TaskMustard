@@ -5,25 +5,42 @@ import AddTask from "./pages/AddTask.tsx";
 import {ApolloClient, HttpLink, InMemoryCache} from "@apollo/client";
 import {ApolloProvider} from "@apollo/client/react";
 import MainWrapper from "./wrappers/MainWrapper.tsx";
+import {LoadingProvider} from "./components/contexts/LoadingContext.tsx";
+import Rendering_experiment from "./pages/Rendering_experiment.tsx";
 
 const client = new ApolloClient({
     link: new HttpLink({uri: import.meta.env.VITE_APOLLO_URI}),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache({
+        typePolicies: {
+            Query: {
+                fields: {
+                    todoTasks : {
+                        merge: false
+                    }
+                }
+            },
+            task: {
+                keyFields: ["taskid"]
+            }
+        }
+    })
 })
 
 function App() {
 
     return (
         <ApolloProvider client={client}>
-
-            <BrowserRouter>
-                <Routes>
-                    <Route element={<MainWrapper/>}>
-                        <Route index path="/" element={<Dashboard/>}/>
-                        <Route path="/add" element={<AddTask/>}/>
-                    </Route>
-                </Routes>
-            </BrowserRouter>
+            <LoadingProvider>
+                <BrowserRouter>
+                    <Routes>
+                        <Route element={<MainWrapper/>}>
+                            <Route index path="/" element={<Dashboard/>}/>
+                            <Route path="/add" element={<AddTask/>}/>
+                            <Route path="/experiment" element={<Rendering_experiment/>}/>
+                        </Route>
+                    </Routes>
+                </BrowserRouter>
+            </LoadingProvider>
         </ApolloProvider>
     )
 }

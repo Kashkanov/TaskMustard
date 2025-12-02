@@ -17,9 +17,7 @@ const resolvers = {
                 return await db.any(`SELECT *
                                      FROM task
                                      WHERE statusid = 1
-                                       AND isfocus = false
-                                     ORDER BY enddatetime
-                                     LIMIT 5`, [true]);
+                                       AND isfocus = false`, [true]);
             } catch (err) {
                 throw new Error(err.message);
             }
@@ -35,7 +33,7 @@ const resolvers = {
         },
         task: async (_, {taskid}) => {
             try {
-                return await db.one(`SELECT *
+                return await db.any(`SELECT *
                                      FROM task
                                      WHERE taskid = '${taskid}'`);
             } catch (err) {
@@ -44,9 +42,9 @@ const resolvers = {
         },
         focusedTask: async () => {
             try {
-                return await db.one(`SELECT *
-                                     FROM task
-                                     WHERE isfocus = true`, [true]);
+                return await db.oneOrNone(`SELECT *
+                                           FROM task
+                                           WHERE isfocus = true`, [true]);
             } catch (err) {
                 throw new Error(err.message);
             }
@@ -93,18 +91,17 @@ const resolvers = {
         },
         changeTaskStatus: async (_, {taskid, statusid}) => {
             try {
-                await db.none(`UPDATE task
-                               SET statusid = '${statusid}'
-                               WHERE taskid = '${taskid}'`);
-                return {
-                    success: true,
-                    message: "Status changed successfully"
-                }
+                const updatedTask = await db.one(`UPDATE task
+                                                  SET statusid = '${statusid}',
+                                                      isfocus  = CASE
+                                                                     WHEN isfocus = true THEN isfocus = false
+                                                                     ELSE isfocus
+                                                          END
+                                                  WHERE taskid = '${taskid}'
+                                                  RETURNING *`, [taskid]);
+                return updatedTask
             } catch (err) {
-                return {
-                    success: false,
-                    message: err.message
-                };
+                throw new Error(err.message);
             }
         },
         changeFocus: async (_, {taskid}) => {
@@ -120,7 +117,19 @@ const resolvers = {
                                                   RETURNING *`, [taskid]);
                 return focusedTask;
 
-            } catch(err){
+            } catch (err) {
+                throw new Error(err.message);
+            }
+        },
+        unfocusTask: async (_, {taskid}) => {
+            try {
+                const unfocusedTask = await db.one(`UPDATE task
+                                                    SET isfocus = false
+                                                    WHERE taskid = '${taskid}'
+                                                    RETURNING *`, [taskid]);
+
+                return unfocusedTask;
+            } catch (err) {
                 throw new Error(err.message);
             }
         }
@@ -137,11 +146,9 @@ const resolvers = {
         category: async (task) => {
             try {
                 return await db.one(`
-                SELECT *
-                FROM
-                category
-                WHERE
-                categoryid = '${task.categoryid}'`);
+                    SELECT *
+                    FROM category
+                    WHERE categoryid = '${task.categoryid}'`);
             } catch (err) {
                 throw new Error(err.message);
             }
@@ -149,11 +156,9 @@ const resolvers = {
         priority: async (task) => {
             try {
                 return await db.one(`
-                SELECT *
-                FROM
-                priority
-                WHERE
-                priorityid = '${task.priorityid}'`);
+                    SELECT *
+                    FROM priority
+                    WHERE priorityid = '${task.priorityid}'`);
             } catch (err) {
                 throw new Error(err.message);
             }
@@ -161,11 +166,9 @@ const resolvers = {
         status: async (task) => {
             try {
                 return await db.one(`
-                SELECT *
-                FROM
-                status
-                WHERE
-                statusid = '${task.statusid}'`);
+                    SELECT *
+                    FROM status
+                    WHERE statusid = '${task.statusid}'`);
             } catch (err) {
                 throw new Error(err.message);
             }

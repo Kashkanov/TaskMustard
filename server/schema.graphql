@@ -49,6 +49,7 @@ type Query {
 
 type Mutation {
     createTask(tasktitle: String!, taskdescription: String, startdatetime: String!, enddatetime: String, priorityid: Int!, categoryid: Int!, statusid: Int, isfocus: Boolean): task!
-    changeTaskStatus(taskid: UUID!, statusid: Int!): SuccessResponse!
-    changeFocus(taskid: UUID!): task!
+    changeTaskStatus(taskid: UUID!, statusid: Int!): task!
+    changeFocus(taskid: UUID!): task
+    unfocusTask(taskid: UUID!): task
 }

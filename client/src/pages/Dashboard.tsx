@@ -1,27 +1,37 @@
 import {gql} from "@apollo/client";
 import {useMutation, useQuery} from "@apollo/client/react";
-import TaskPreview from "../components/Dashboard/TaskPreview.tsx";
 import FocusedTask from "../components/Dashboard/FocusedTask.tsx";
 import type {completeTask} from "../types/completeTask.ts";
-import {AnimatePresence, motion} from "motion/react";
+import {AnimatePresence} from "motion/react";
+import {useEffect} from "react";
+import {useLoading} from "../components/contexts/LoadingContext.tsx";
+import OngoingTasksArea from "../components/Dashboard/OngoingTasksArea.tsx";
 
 type GetTaskTodoPrevsData = {
     todoTasks: completeTask[]
 }
 
 type GetTaskFocusedData = {
-    focusedTask: completeTask
+    focusedTask: completeTask | null
 }
 
 type GetChangeTaskFocusedData = {
-    changeFocus: completeTask
+    changeFocus: completeTask | null
+}
+
+type GetChangeTaskStatusData = {
+    changeTaskStatus: completeTask
+}
+
+type GetUnfocusData = {
+    unfocusTask: completeTask | null
 }
 
 const GET_TODO_TASKS = gql`
     query GetTodoTasks {
         todoTasks {
-            tasktitle
             taskid
+            tasktitle
             taskdescription
             status {
                 statusid
@@ -94,12 +104,72 @@ const CHANGE_FOCUSED_TASK = gql`
     }
 `;
 
+const CHANGE_TASK_STATUS = gql`
+    mutation ChangeTaskStatus($taskid: UUID!, $statusid: Int!){
+        changeTaskStatus(taskid: $taskid, statusid: $statusid) {
+            taskid
+            tasktitle
+            taskdescription
+            startdatetime
+            enddatetime
+            priorityid
+            categoryid
+            statusid
+            priority {
+                priorityid
+                priorityname
+                colorcode
+            }
+            category {
+                categoryid
+                categoryname
+            }
+            status {
+                statusid
+                statusname
+            }
+            isfocus
+        }
+    }`
+
+const UNFOCUS_TASK = gql`
+    mutation unfocus($taskid: UUID!) {
+        unfocusTask(taskid: $taskid) {
+            taskid
+            tasktitle
+            taskdescription
+            startdatetime
+            enddatetime
+            priorityid
+            categoryid
+            statusid
+            priority {
+                priorityid
+                priorityname
+                colorcode
+            }
+            category {
+                categoryid
+                categoryname
+            }
+            status {
+                statusid
+                statusname
+            }
+            isfocus
+        }
+    }
+`
+
 
 const Dashboard = () => {
 
     const {loading: todoLoading, data: todoData} = useQuery<GetTaskTodoPrevsData>(GET_TODO_TASKS);
     const {loading: focusedLoading, data: focusedTask} = useQuery<GetTaskFocusedData>(GET_FOCUSED_TASK);
 
+    const {setLoading} = useLoading();
+
+    // if focus is changed, remove prevFocus from focus, add it back to the to-do. Then, add new focus to the focus
     const [changeFocus] = useMutation<GetChangeTaskFocusedData>(CHANGE_FOCUSED_TASK, {
         update(cache, {data}) {
             if (!data?.changeFocus) return;
@@ -109,13 +179,21 @@ const Dashboard = () => {
             const existing = cache.readQuery<GetTaskTodoPrevsData>({query: GET_TODO_TASKS})
             const focused = cache.readQuery<GetTaskFocusedData>({query: GET_FOCUSED_TASK})
 
-            if (!existing || !focused) return;
+            console.log(newFocus?.tasktitle)
 
-            const prevFocus = focused.focusedTask;
+            if (!existing) return;
 
-            const newTodo = existing.todoTasks
-                .filter((task) => task.taskid !== newFocus.taskid)
-                .concat(prevFocus);
+            const prevFocus = focused?.focusedTask;
+
+            let newTodo
+            if (prevFocus) {
+                newTodo = existing.todoTasks
+                    .filter((task) => task.taskid !== newFocus.taskid)
+                    .concat(prevFocus);
+            } else {
+                newTodo = existing.todoTasks
+                    .filter((task) => task.taskid !== newFocus.taskid)
+            }
 
             cache.writeQuery<GetTaskTodoPrevsData>({
                 query: GET_TODO_TASKS,
@@ -129,7 +207,6 @@ const Dashboard = () => {
         }
     });
 
-
     const onChangeFocusedTask = async (taskid: string) => {
         try {
             changeFocus({variables: {taskid: taskid}})
@@ -138,84 +215,99 @@ const Dashboard = () => {
         }
     }
 
+    // if done with task remove task from focus
+    const [changeStatus] = useMutation<GetChangeTaskStatusData>(CHANGE_TASK_STATUS, {
+        update(cache, {data}) {
+            if (!data?.changeTaskStatus) return;
+
+            cache.writeQuery<GetTaskFocusedData>({
+                query: GET_FOCUSED_TASK,
+                data: {focusedTask: null}
+            })
+        }
+    })
+
+    const onChangeStatus = async (taskid: string, statusid: number) => {
+        try {
+            changeStatus({variables: {taskid: taskid, statusid: statusid}})
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    //  if focus is removed, remove prevFocus from focus, add it back to the to-do.
+    const [unfocus] = useMutation<GetUnfocusData>(UNFOCUS_TASK, {
+        update(cache, {data}) {
+            if(!data?.unfocusTask) return
+
+            const removedFocus = data?.unfocusTask
+            const existing = cache.readQuery<GetTaskTodoPrevsData>({query: GET_TODO_TASKS})
+
+            if (!existing) return;
+
+            console.log(removedFocus)
+
+            cache.writeQuery<GetTaskFocusedData>({
+                query: GET_FOCUSED_TASK,
+                data: {focusedTask: null}
+            })
+
+            if (removedFocus) {
+                const newTodo = existing.todoTasks.concat(removedFocus)
+
+                console.log(newTodo)
+
+                cache.writeQuery<GetTaskTodoPrevsData>({
+                    query: GET_TODO_TASKS,
+                    data: {todoTasks: newTodo}
+                })
+            }
+
+
+        }
+    })
+
+    const onUnfocus = (taskid: string) => {
+        console.log(taskid)
+        try {
+            unfocus({variables: {taskid: taskid}})
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        if (focusedLoading || todoLoading)
+            setLoading(true)
+        else
+            setLoading(false)
+    }, [focusedLoading, todoLoading]);
+
     return (
         <div className="flex flex-col justify-center items-center w-full mx-auto bg-gray-200 py-5 h-full">
-            {focusedLoading ? (
-                <p>Loading...</p>
-            ) : (
-                focusedTask &&
-                <motion.div
-                    key={focusedTask.focusedTask.taskid}
-                    className="relative flex flex-col items-center justify-center w-5/6 h-70 gap-y-5"
-                    initial={{
-                        opacity: 0,
-                        y: 200,
-                        scale: 0.5
-                    }}
-                    animate={{
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        transition: {
-                            delay: 0.2,
-                            type: "tween",
-                            duration: 0.5
-                        }
-                    }}
-                    exit={{
-                        opacity: 0,
-                        y: 200,
-                        scale: 0,
-                        transition: {
-                            type: "tween",
-                            duration: 0.2
-                        }
-                    }}
-                >
+            {focusedTask &&
+                <div className="flex flex-col items-center justify-center w-5/6 h-80 gap-y-5">
                     <h2 className="font-bold text-xl text-start h-1/12 w-full">Focus on this 🔥</h2>
-                    <div className="relative w-full h-11/12 bg-white rounded-lg overflow-hidden shadow-md">
+                    <div className="w-full h-11/12 bg-white rounded-lg overflow-hidden shadow-md">
                         <AnimatePresence>
-                            <FocusedTask task={focusedTask.focusedTask}/>
+                            <FocusedTask
+                                task={focusedTask.focusedTask}
+                                onChangeStatus={onChangeStatus}
+                                onUnfocus={onUnfocus}
+                            />
                         </AnimatePresence>
                     </div>
-                </motion.div>
-
-            )}
+                </div>
+            }
             <div
                 className="flex flex-col items-start justify-center w-5/6 rounded-lg mt-3 p-5 bg-white shadow-md">
                 <h2 className="font-bold text-xl text-start h-1/12 w-full">To do</h2>
-
-                {todoLoading ? (
-                    <p>Loading...</p>
-                ) : (
-                    <AnimatePresence>
-                        <div
-                            className="flex flex-col items-center justify-start w-full max-h-35 border border-b-0 bg-secondary-100 r">
-                            {todoData?.todoTasks.map((task) => (
-                                <motion.div
-                                    key={task.taskid}
-                                    initial={{opacity: 0, x: -50}}
-                                    animate={{opacity: 1, x: 0}}
-                                    exit={{opacity: 0, x: -50}}
-                                    whileHover={{
-                                        scaleY: 1.02,
-                                        scaleX: 1.02,
-                                        borderBottom: 0,
-                                        backgroundColor: "#c0faee",
-                                        boxShadow: "8px"
-                                    }}
-                                    layout
-                                    className="flex h-7 w-full border-b-1 bg-white"
-                                >
-                                    <TaskPreview
-                                        task={task}
-                                        onChangeFocusedTask={onChangeFocusedTask}
-                                    />
-                                </motion.div>
-                            ))}
-                        </div>
-                    </AnimatePresence>
-                )}
+                {todoData?.todoTasks &&
+                    <OngoingTasksArea
+                        tasks={todoData?.todoTasks}
+                        onChangeFocusedTask={onChangeFocusedTask}
+                    />
+                }
             </div>
         </div>
     )

@@ -69,7 +69,7 @@ const AddTask = () => {
             categoryID: 0
         }
     });
-    const [createTask, { /*loading: formLoading,*/ error}] = useMutation(CREATE_TASK);
+    const [createTask] = useMutation(CREATE_TASK);
     const {loading: categLoading, data: categData} = useQuery<GetCategoriesData>(GET_CATEGORIES);
     const {loading: prioLoading, data: prioData} = useQuery<GetPrioritiesData>(GET_PRIORITIES);
 
