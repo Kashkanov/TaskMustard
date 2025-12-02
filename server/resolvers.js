@@ -26,7 +26,8 @@ const resolvers = {
             try {
                 return await db.any(`SELECT *
                                      FROM task
-                                     WHERE statusid = 2`, [true]);
+                                     WHERE statusid = 2
+                                       AND isfocus = false`, [true]);
             } catch (err) {
                 throw new Error(err.message);
             }
@@ -93,10 +94,7 @@ const resolvers = {
             try {
                 const updatedTask = await db.one(`UPDATE task
                                                   SET statusid = '${statusid}',
-                                                      isfocus  = CASE
-                                                                     WHEN isfocus = true THEN isfocus = false
-                                                                     ELSE isfocus
-                                                          END
+                                                      isfocus  = false
                                                   WHERE taskid = '${taskid}'
                                                   RETURNING *`, [taskid]);
                 return updatedTask

@@ -1,11 +1,11 @@
 import type {completeTask} from "../../types/completeTask.ts";
-import {type FC, /*useEffect*/} from "react";
-import {AnimatePresence, motion} from "motion/react";
+import {type FC, useEffect, useState, /*useEffect*/} from "react";
+import {AnimatePresence, Reorder} from "motion/react";
 import {stagger, type Variants} from "motion";
 import TaskPreview from "./TaskPreview.tsx";
 
 type OngoingTasksAreaProps = {
-    tasks: completeTask[] | undefined
+    tasks: completeTask[]
     onChangeFocusedTask: (taskid: string) => void
 }
 
@@ -27,39 +27,36 @@ const OngoingTasksArea: FC<OngoingTasksAreaProps> = ({tasks, onChangeFocusedTask
         visible: {opacity: 1, x: 0},
     }
 
+    const [ongoingTasks, setOngoingTasks] = useState<completeTask[]>(tasks)
+
+    useEffect(() => {
+        setOngoingTasks(tasks
+        )
+    }, [tasks]);
 
     return (
-        <AnimatePresence>
-            <motion.div
-                className="flex flex-col items-center justify-start w-full h-[130px] border-1 bg-secondary-100 overflow-y-auto overflow-x-hidden"
+            <Reorder.Group
                 variants={parentVars}
                 initial="hidden"
                 animate="visible"
+                axis="y"
+                onReorder={setOngoingTasks}
+                values={ongoingTasks}
+                className="flex flex-col items-center justify-start w-full h-[130px] border-1 bg-secondary-100 overflow-y-auto overflow-x-hidden"
             >
+                <AnimatePresence>
+                {ongoingTasks?.map((task) => (
 
-                {tasks?.map((task) => (
-                    <motion.div
-                        key={task.taskid}
-                        variants={childrenVars}
-                        initial={{opacity: 0, x: -50}}
-                        animate={{opacity: 1, x: 0}}
-                        exit={{opacity: 0, x: -50}}
-                        // whileHover={{
-                        //     borderBottom: 0,
-                        //     backgroundColor: "#c0faee",
-                        // }}
-                        layout
-                        className="flex h-[26px] w-full border-b-1 bg-white"
-                    >
                         <TaskPreview
+                            key={task.taskid}
                             task={task}
                             onChangeFocusedTask={onChangeFocusedTask}
+                            childrenVars={childrenVars}
                         />
-                    </motion.div>
-                ))}
 
-            </motion.div>
-        </AnimatePresence>
+                ))}
+                </AnimatePresence>
+            </Reorder.Group>
     )
 }
 
