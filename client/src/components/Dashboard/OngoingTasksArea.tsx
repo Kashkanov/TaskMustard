@@ -42,7 +42,7 @@ const OngoingTasksArea: FC<OngoingTasksAreaProps> = ({tasks, onChangeFocusedTask
                 axis="y"
                 onReorder={setOngoingTasks}
                 values={ongoingTasks}
-                className="flex flex-col items-center justify-start w-full h-[130px] border-1 bg-secondary-100 overflow-y-auto overflow-x-hidden"
+                className="flex flex-col items-center justify-start w-full h-[130px] border-1 border-secondary-100 bg-secondary-100 overflow-y-auto overflow-x-hidden"
             >
                 <AnimatePresence>
                 {ongoingTasks?.map((task) => (

@@ -18,7 +18,7 @@ const TaskPreview: FC<TaskPreviewProps> = ({ task, onChangeFocusedTask, children
 
     return (
         <Reorder.Item
-            className="flex h-[32.5px] w-full border-b-1 bg-white"
+            className="flex h-[32.5px] w-full border-b-1 border-secondary-100 bg-white"
             value={task}
             dragListener={false}
             dragControls={dragControls}

@@ -25,9 +25,9 @@ const FocusedTask: FC<FocusedTaskProps> = ({task, onChangeStatus, onUnfocus}) =>
 
         <motion.div
             key={task?.taskid}
-            initial={{opacity:0}}
-            animate={{opacity:1}}
-            exit={{opacity:0}}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
             transition={{
                 duration: 0.2,
                 ease: "easeOut"
@@ -35,20 +35,39 @@ const FocusedTask: FC<FocusedTaskProps> = ({task, onChangeStatus, onUnfocus}) =>
             className="flex flex-col items-center justify-start w-full h-full bg-white rounded-lg p-5"
         >
             <div className="flex justify-between items-center w-full h-2/6">
-                        <span className="text-start font-semibold w-3/8 text-2xl truncate bg-secondary-600">
+                <div className="text-start font-semibold w-3/8">
+                    <motion.div
+                        initial={{width: 0}}
+                        animate={{width: 'auto'}}
+                        transition={{
+                            delay: 0.5,
+                            duration: 0.2,
+                        }}
+                        className="text-2xl truncate bg-black text-secondary-300 "
+                    >
+                        <motion.span
+                            initial={{opacity: 0}}
+                            animate={{opacity: 1}}
+                            transition={{
+                                delay: 0.7,
+                                duration: 0.2
+                            }}
+                        >
                             {task?.tasktitle}
-                        </span>
-                <span className="w-1/8 text-lg truncate">
-                            {task?.category.categoryname}
-                        </span>
-                <span className="flex items-center w-1/8 text-lg truncate">
-                            <div
-                                className="w-5 h-5 border-1 border-black"
-                                style={{background: task?.priority.colorcode}}
-                            />
+                        </motion.span>
+                    </motion.div>
+                </div>
+                <div className="w-1/8 text-lg truncate">
+                    <span>{task?.category.categoryname}</span>
+                </div>
+                <div className="flex items-center w-1/8 text-lg truncate">
+                    <div
+                        className="w-5 h-5 border-1 border-black"
+                        style={{background: task?.priority.colorcode}}
+                    />
                     &nbsp;
-                    {task?.priority.priorityname}
-                        </span>
+                    <span>{task?.priority.priorityname}</span>
+                </div>
                 {task && (
                     <>
                         <span className="w-2/8 text-start text-lg truncate font-bold text-red-600">
@@ -62,10 +81,10 @@ const FocusedTask: FC<FocusedTaskProps> = ({task, onChangeStatus, onUnfocus}) =>
                                 I'm done &nbsp; <FontAwesomeIcon icon={faCheck}/>
                             </button>
                             <button
-                                className="h-full w-full font-bold bg-white hover:bg-gray-400 hover:text-white rounded-sm border-2"
+                                className="h-full w-full bg-white hover:bg-gray-400 hover:text-white rounded-sm border-1"
                                 onClick={() => onUnfocus(task?.taskid)}
                             >
-                                Unfocus &nbsp; <FontAwesomeIcon icon={faExpand} />
+                                Unfocus &nbsp; <FontAwesomeIcon icon={faExpand}/>
                             </button>
 
                         </div>
@@ -73,7 +92,7 @@ const FocusedTask: FC<FocusedTaskProps> = ({task, onChangeStatus, onUnfocus}) =>
                 )}
             </div>
             <div
-                className="w-full h-5/6 ql-editor border-1"
+                className="w-full h-5/6 ql-editor border-1 border-secondary-100"
                 ref={descRef}
             >
                 {task?.taskdescription}

@@ -8,6 +8,15 @@ export const timeOnly = (dateTime: string) => {
     return date.toLocaleTimeString('en-US', {})
 }
 
+
+export const dateOnlyFromDate = (dateTime: Date) => {
+    return dateTime.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+    });
+}
+
+
 export const dateDiff = (dateTime1: string, dateTime2: string) => {
     const date1 = new Date(dateTime1);
     const date2 = new Date(dateTime2);

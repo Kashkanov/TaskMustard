@@ -105,7 +105,7 @@ const AddTask = () => {
 
 
     return (
-        <div className="flex flex-col justify-center items-center w-full mx-auto bg-gray-200 py-5 h-full">
+        <div className="flex flex-col justify-center items-center w-full mx-auto bg-gray-200 pt-24 pb-5 h-full">
             {categLoading || prioLoading ? (
                 <p>Loading...</p>
             ) : (
@@ -126,7 +126,7 @@ const AddTask = () => {
                     <div className="flex flex-col justify-center text-start w-full h-[60px] gap-y-1">
                         <input
                             {...register("taskTitle", {required: "Required"})}
-                            className="w-full h-2/3 bg-white border-1 rounded-sm"
+                            className="w-full h-2/3 bg-white border-1 border-secondary-100 rounded-sm"
                             type="text"
                         />
                         <label>
@@ -139,7 +139,7 @@ const AddTask = () => {
                         <div className="flex flex-col w-1/2 h-full gap-y-1">
                             <input
                                 {...register("startDateTime", {required: "Required"})}
-                                className="w-full h-2/3 bg-white border-1 rounded-sm"
+                                className="w-full h-2/3 bg-white border-1 border-secondary-100 rounded-sm"
                                 type="datetime-local"
                             />
                             <label>
@@ -150,7 +150,7 @@ const AddTask = () => {
                         <div className="flex flex-col w-1/2 h-full gap-y-1">
                             <input
                                 {...register("endDateTime")}
-                                className="w-full h-2/3 bg-white border-1 rounded-sm"
+                                className="w-full h-2/3 bg-white border-1 border-secondary-100 rounded-sm"
                                 type="datetime-local"
                             />
                             <label>
@@ -175,7 +175,7 @@ const AddTask = () => {
                         <div className="flex flex-col w-1/2 h-full gap-y-1">
                             <select
                                 {...register("categoryID", {required: "Required"})}
-                                className="w-full h-2/3 bg-white border-1 rounded-sm"
+                                className="w-full h-2/3 bg-white border-1 border-secondary-100 rounded-sm"
                             >
                                 <option className="text-gray-300" selected hidden value={0}>--Select Category--</option>
                                 {categData?.categories.map(category => (
@@ -197,7 +197,7 @@ const AddTask = () => {
                         </div>
                         <div className="flex flex-col w-1/2 h-full gap-y-1">
                             <select
-                                className="w-full h-2/3 bg-white border-1 rounded-sm"
+                                className="w-full h-2/3 bg-white border-1 border-secondary-100 rounded-sm"
                                 {...register("priorityID", {required: "Required"})}
                             >
                                 {prioData?.priorities.map((priority) => (

@@ -17,12 +17,18 @@
 
 @font-face {
     font-family: 'Inter';
-    src: url('./assets/fonts/Inter-Regular.ttf');
+    src: url('./assets/fonts/Inter_18pt-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bebas Neue';
+    src: url('./assets/fonts/BebasNeue-Regular.ttf');
 }
 
 a {
     font-weight: 500;
-    color: #646cff;
     text-decoration: inherit;
 }
 
@@ -45,6 +51,10 @@ h1 {
     line-height: 1.1;
 }
 
+.logo-font {
+    font-family: 'Bebas Neue', sans-serif;
+}
+
 button {
     /*border-radius: 8px;*/
     /*border: 1px solid transparent;*/
@@ -65,15 +75,16 @@ button {
 
 @theme {
     --color-primary-100: #FFFFFF ;
-    --color-primary-200: #FFF18B;
-    --color-secondary-100: #EBEBEB;
-    --color-secondary-200: #F798A8;
-    --color-secondary-300: #ffa147;
-    --color-secondary-400: #fff18b;
-    --color-secondary-500: #c0faee;
-    --color-secondary-600: #78f4ec;
-    --color-secondary-700: #d3abe9;
-    --color-secondary-800: #ef99e2;
+    --color-primary-200: #25ced1;
+    --color-primary-300: #fceade;
+    --color-primary-400: #ff8a5b;
+    --color-primary-500: #ea526f;
+    --color-secondary-100: #DCE0E5;
+    --color-secondary-200: #fff18b;
+    --color-secondary-300: #c0faee;
+    --color-secondary-400: #78f4ec;
+    --color-secondary-500: #d3abe9;
+    --color-secondary-600: #ef99e2;
 }
 
 @media (prefers-color-scheme: light) {
@@ -106,13 +117,13 @@ input{
     font-family: 'Grotesk', sans-serif;
     max-height: 10rem;
     /*border: black 1px solid;*/
-    border-radius: 0.375rem;
+    border-radius: 0 0 0.375rem 0.375rem;
     overflow-y: auto;
 }
 
 .quill {
-    border: black 1px solid;
-    border-radius: 0.375rem;
+    border: var(--color-primary-100) 1px solid;
+    border-radius: 0 0.375rem 0.375rem 0;
 }
 
 .ql-editor {

@@ -264,8 +264,6 @@ const Dashboard = () => {
                     data: {ongoingTasks: newTodo}
                 })
             }
-
-
         }
     })
 
@@ -286,16 +284,22 @@ const Dashboard = () => {
     }, [focusedLoading, todoLoading]);
 
     return (
-        <div className="flex flex-col justify-between items-center w-full mx-auto bg-gray-200 py-5 h-full">
+        <div className="flex flex-col justify-between items-center w-full mx-auto bg-gray-200 pt-24 pb-5 h-full">
             {focusedTask &&
                 <div className="flex flex-col items-center justify-center w-5/6 h-80 gap-y-5">
-                    <h2 className="font-bold text-xl text-start h-1/12 w-full">Focus on this 🔥</h2>
+                    <motion.h2
+                        initial={{opacity:0}}
+                        animate={{opacity:1}}
+                        transition={{delay: 0.5}}
+                        className="font-medium text-xl text-start h-1/12 w-full"
+                    >
+                        Focus on this 🔥
+                    </motion.h2>
                     {/*focus area*/}
                     <motion.div
                         initial={{opacity: 0, y: -100}}
                         animate={{opacity: 1, y: 0}}
                         transition={{
-                            delay: 0.5,
                             duration: 0.5,
                             type: "tween",
                             ease: "easeOut",
@@ -318,7 +322,7 @@ const Dashboard = () => {
                                         alt="nofocus"
                                     />
                                     <motion.h1
-                                        className="z-20 underline text-black decoration-red-600 p-3 font-bold "
+                                        className="z-20 underline text-black decoration-red-600 p-3 font-medium "
                                         animate={{
                                             opacity: 1,
                                             scale: [1, 1, 1, 1.1, 1, 1.1, 1, 1, 1]
@@ -341,7 +345,7 @@ const Dashboard = () => {
             }
             <div
                 className="flex flex-col items-start justify-center w-5/6 rounded-lg mt-3 p-5 bg-white shadow-md">
-                <h2 className="font-bold text-xl text-start h-1/12 w-full">To do</h2>
+                <h2 className="font-medium text-xl text-start h-1/12 w-full">To do</h2>
                 {todoData?.ongoingTasks &&
                     <OngoingTasksArea
                         tasks={todoData?.ongoingTasks}
