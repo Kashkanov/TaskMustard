@@ -1,4 +1,4 @@
-const {students, colleges} = require("./db");
+const {parse, startOfDay, endOfDay} = require("date-fns")
 const db = require("./db");
 
 const resolvers = {
@@ -50,7 +50,25 @@ const resolvers = {
                 throw new Error(err.message);
             }
         },
+        tasksByWeek: async (_, {start, end}) => {
+            const s = parse(start, 'MM/dd/yyyy', new Date());
+            const startDate = startOfDay(s);
+            const e = parse(end, 'MM/dd/yyyy', new Date());
+            const endDate = endOfDay(e);
 
+            console.log(`${typeof start} - ${typeof end}`);
+
+            try {
+                return await db.manyOrNone(`SELECT *
+                                            FROM task
+                                            WHERE startdatetime BETWEEN $1 AND $2
+                                               OR enddatetime BETWEEN $1 AND $2`,
+                    [startDate, endDate]
+                );
+            } catch (err) {
+                throw new Error(err.message);
+            }
+        },
         categories: async () => {
             try {
                 return await db.any(`SELECT *

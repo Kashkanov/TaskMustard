@@ -1,7 +1,6 @@
 import './App.css'
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Dashboard from "./pages/Dashboard.tsx";
-import AddTask from "./pages/AddTask.tsx";
 import {ApolloClient, HttpLink, InMemoryCache} from "@apollo/client";
 import {ApolloProvider} from "@apollo/client/react";
 import MainWrapper from "./wrappers/MainWrapper.tsx";
@@ -37,7 +36,6 @@ function App() {
                     <Routes>
                         <Route element={<MainWrapper/>}>
                             <Route index path="/" element={<Dashboard/>}/>
-                            <Route path="/add" element={<AddTask/>}/>
                             <Route path="/plan" element={<Plan/>}/>
                             {/*<Route path="/experiment" element={<Rendering_experiment/>}/>*/}
                         </Route>

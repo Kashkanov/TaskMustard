@@ -42,6 +42,7 @@ type Query {
     ongoingTasks: [task]
     task(taskid: UUID!): task
     focusedTask: task
+    tasksByWeek(start: String!, end: String!): [task]
     categories: [category]
     priorities: [priority]
     statuses: [status]

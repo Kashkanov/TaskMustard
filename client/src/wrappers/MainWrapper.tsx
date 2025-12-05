@@ -4,9 +4,9 @@ import Sidebar from "../components/partials/Sidebar.tsx";
 
 const MainWrapper = () => {
     return (
-        <div className="min-h-screen w-screen bg-gray-200 pl-50">
+        <div className="relative min-h-screen max-w-dvw bg-gray-200 pl-50 overflow-x-hidden">
             <Sidebar/>
-            <main className="flex flex-col w-[calc(100vw-12.5rem)] ">
+            <main className="flex flex-col w-[calc(100vw-12.5rem)]">
                 <Navbar/>
                 <Outlet/>
             </main>

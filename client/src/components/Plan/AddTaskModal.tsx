@@ -1,14 +1,19 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {useState} from "react";
-import Editor from "../components/Editor.tsx";
+import {type FC, useState} from "react";
 import {useForm} from "react-hook-form";
-import type {taskType} from "../types/taskType.ts";
+import type {taskType} from "../../types/taskType.ts";
 import {gql} from "@apollo/client";
 import {useMutation, useQuery} from "@apollo/client/react";
-import type {priorityType} from "../types/priorityType.ts";
-import type {categoryType} from "../types/categoryType.ts";
+import type {priorityType} from "../../types/priorityType.ts";
+import type {categoryType} from "../../types/categoryType.ts";
 import {useNavigate} from "react-router-dom";
+import Editor from "../Editor.tsx";
+import { motion } from "motion/react";
+
+type AddTaskModalProps = {
+    setIsAddShowing: (isAdding: boolean) => void;
+}
 
 type GetPrioritiesData = {
     priorities: priorityType[];
@@ -48,7 +53,7 @@ const GET_PRIORITIES = gql`{
     }
 }`;
 
-const AddTask = () => {
+const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing }) => {
 
     const navigate = useNavigate();
 
@@ -105,12 +110,21 @@ const AddTask = () => {
 
 
     return (
-        <div className="flex flex-col justify-center items-center w-full mx-auto bg-gray-200 pt-24 pb-5 h-full">
+        <div className="absolute top-0 left-0 flex flex-col justify-center items-center w-screen h-screen z-50 overflow-x-hidden">
+            <div className="h-full w-full bg-black opacity-75"/>
             {categLoading || prioLoading ? (
                 <p>Loading...</p>
             ) : (
-                <form
-                    className="flex flex-col items-center justify-center w-2/3 h-4/6 bg-secondary-white rounded-lg gap-y-2 shadow-lg bg-white p-4"
+                <motion.form
+                    className="absolute flex flex-col items-center justify-center w-3/4 h-5/6 bg-secondary-white rounded-lg gap-y-2 shadow-lg bg-white p-4"
+                    initial={{opacity: 0, y: 100}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{
+                        type: "tween",
+                        duration: 0.2,
+                        ease: "easeOut"
+                    }}
+                    exit={{opacity: 0, y: 100}}
                     onSubmit={handleSubmit(onSubmit)}
                 >
 
@@ -118,6 +132,7 @@ const AddTask = () => {
                         <span className="font-bold text-xl">Add Task</span>
                         <button
                             type="button"
+                            onClick={()=>setIsAddShowing(false)}
                         >
                             <FontAwesomeIcon icon={faXmark} color="red"/>Cancel
                         </button>
@@ -228,10 +243,10 @@ const AddTask = () => {
                         </button>
                     </div>
 
-                </form>
+                </motion.form>
             )}
         </div>
     )
 }
 
-export default AddTask;
+export default AddTaskModal;

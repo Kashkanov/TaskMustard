@@ -4,7 +4,6 @@ const {expressMiddleware} = require('@apollo/server/express4');
 const fs = require("node:fs");
 const typeDefs = fs.readFileSync('./schema.graphql', {encoding: 'utf-8'});
 const resolvers = require('./resolvers');
-const taskServices = require('./sql/tasks/taskServices')
 
 async function init() {
     const app = express();
