@@ -1,10 +1,10 @@
-import type {dateWeek} from "../../types/dateWeek.ts";
+import type {dateWeek} from "../../interfaces/dateWeek.ts";
 import {type FC} from "react";
 import {dateOnlyFromDate} from "../../functions/DateFormatters.ts";
 import {motion} from "motion/react";
 import type {Variants} from "motion";
 import DayArea from "./DayArea.tsx";
-import type {completeTask} from "../../types/completeTask.ts";
+import type {completeTask} from "../../interfaces/completeTask.ts";
 
 type WeekAreaProps = {
     week: dateWeek[]
@@ -50,7 +50,7 @@ const WeekArea: FC<WeekAreaProps> = ({week, direction, currDate, weeklyTasks}) =
             {week.map((day, index) => {
 
                 const tasks = weeklyTasks[day.date.toLocaleDateString()];
-                // const hasTasks = tasks?.length > 0;
+                // const hasTasks = tasks?.length > 0;1
 
                 return (
                         <div

@@ -2,16 +2,17 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 import {type FC, useState} from "react";
 import {useForm} from "react-hook-form";
-import type {taskType} from "../../types/taskType.ts";
+import type {taskType} from "../../interfaces/taskType.ts";
 import {ApolloClient, type OperationVariables} from "@apollo/client";
 import {useMutation, useQuery} from "@apollo/client/react";
-import type {priorityType} from "../../types/priorityType.ts";
-import type {categoryType} from "../../types/categoryType.ts";
+import type {priorityType} from "../../interfaces/priorityType.ts";
+import type {categoryType} from "../../interfaces/categoryType.ts";
 import Editor from "../Editor.tsx";
 import { motion } from "motion/react";
 import {CREATE_TASK} from "../../hooks/mutations/CreateTask.ts";
 import {GET_CATEGORIES} from "../../hooks/queries/GetCategories.ts";
 import {GET_PRIORITIES} from "../../hooks/queries/GetPriorities.ts";
+import {useToast} from "../contexts/ToastContext.tsx";
 
 class getWeeklyTasksProps {
 }
@@ -60,6 +61,8 @@ const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing, refetch }) => {
         trigger("taskDescription");
     }
 
+    const { addToast } = useToast();
+
     const onSubmit = async (data: taskType) => {
         console.log(data);
         try {
@@ -75,9 +78,11 @@ const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing, refetch }) => {
                     isfocus: false
                 }
             })
-            if(res)
+            if(res) {
                 refetch()
                 setIsAddShowing(false)
+                addToast("任务已创建", "Success", 5000);
+            }
         } catch (err) {
             console.log(err);
         }

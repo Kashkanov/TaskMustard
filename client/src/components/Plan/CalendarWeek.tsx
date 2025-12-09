@@ -1,11 +1,12 @@
-import type {dateWeek} from "../../types/dateWeek.ts";
-import {type FC, useMemo} from "react";
+import type {dateWeek} from "../../interfaces/dateWeek.ts";
+import {type FC, useEffect, useMemo} from "react";
 import {dateOnlyFromDate} from "../../functions/DateFormatters.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLeftLong, faPlus, faRightLong} from "@fortawesome/free-solid-svg-icons";
 import WeekArea from "./WeekArea.tsx";
 import {AnimatePresence} from "motion/react";
-import type {completeTask} from "../../types/completeTask.ts";
+import type {completeTask} from "../../interfaces/completeTask.ts";
+import {useToast} from "../contexts/ToastContext.tsx";
 
 type CalendarWeekProps = {
     currDate: Date,
@@ -52,10 +53,12 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
         }, {} as Record<string, completeTask[]>)
     }, [weeklyTasks])
 
-    // useEffect(() => {
-    //     if (tasksByDate)
-    //         console.log(tasksByDate)
-    // }, [tasksByDate]);
+    const {addToast} = useToast()
+
+    useEffect(() => {
+        if (tasksByDate)
+            console.log(tasksByDate)
+    }, [tasksByDate]);
 
     return (
         <>
@@ -66,6 +69,21 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
                         <h3 className="w-60 text-2xl">({dateOnlyFromDate(week[0].date)} - {dateOnlyFromDate(week[6].date)})</h3>
                     </div>
                     <div className="flex items-center justify-center h-full gap-2">
+                        {/* Toast test */}
+                        <button
+                            className="border-1"
+                            type="button"
+                            onClick={()=>addToast("您赢得积分", "Success", 5000)}
+                        >
+                            Success
+                        </button>
+                        <button
+                            className="border-1"
+                            type="button"
+                            onClick={()=>addToast("你会死的", "失败", 5000)}
+                        >
+                            Fail
+                        </button>
                         <button
                             className="h-full w-30 bg-primary-400 border-1 border-secondary-100 text-white"
                             onClick={() => setIsAddShowing(true)}
@@ -73,13 +91,13 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
                             <FontAwesomeIcon icon={faPlus}/> &nbsp; Add Task
                         </button>
                         <button
-                            className="h-full w-10 bg-primary-300 border-1 border-secondary-100"
+                            className="h-full w-10 border-1 border-secondary-100"
                             onClick={onPreviousWeek}
                         >
                             <FontAwesomeIcon icon={faLeftLong}/>
                         </button>
                         <button
-                            className="h-full w-10 bg-primary-300 border-1 border-secondary-100"
+                            className="h-full w-10 border-1 border-secondary-100"
                             onClick={onNextWeek}
                         >
                             <FontAwesomeIcon icon={faRightLong}/>

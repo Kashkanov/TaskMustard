@@ -1,4 +1,4 @@
-import type {completeTask} from "../../types/completeTask.ts";
+import type {completeTask} from "../../interfaces/completeTask.ts";
 import {type FC, useEffect, useState, /*useEffect*/} from "react";
 import {AnimatePresence, Reorder} from "motion/react";
 import {stagger, type Variants} from "motion";

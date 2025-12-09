@@ -127,8 +127,8 @@ input{
 }
 
 .ql-editor {
-    /*min-height: 10rem;*/
-    /*height: 9rem;*/
+    min-height: 10rem;
+    height: 9rem;
     background: white;
 }
 

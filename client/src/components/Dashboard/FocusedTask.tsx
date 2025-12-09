@@ -1,5 +1,5 @@
 import {type FC, useEffect, useRef} from "react";
-import type {completeTask} from "../../types/completeTask.ts";
+import type {completeTask} from "../../interfaces/completeTask.ts";
 import {dateDiff} from "../../functions/DateFormatters.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck, faExpand} from "@fortawesome/free-solid-svg-icons";

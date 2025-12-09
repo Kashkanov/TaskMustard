@@ -2,7 +2,7 @@ import type {FC} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowsToEye, faGripVertical} from "@fortawesome/free-solid-svg-icons";
 import {dateDiff} from "../../functions/DateFormatters.ts";
-import type {completeTask} from "../../types/completeTask.ts";
+import type {completeTask} from "../../interfaces/completeTask.ts";
 import {motion, Reorder, useDragControls} from "motion/react";
 import type {Variants} from "motion";
 

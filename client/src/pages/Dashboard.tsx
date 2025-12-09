@@ -1,6 +1,6 @@
 import {useMutation, useQuery} from "@apollo/client/react";
 import FocusedTask from "../components/Dashboard/FocusedTask.tsx";
-import type {completeTask} from "../types/completeTask.ts";
+import type {completeTask} from "../interfaces/completeTask.ts";
 import {AnimatePresence, motion} from "motion/react";
 import {useEffect} from "react";
 import {useLoading} from "../components/contexts/LoadingContext.tsx";
@@ -12,6 +12,7 @@ import {GET_FOCUSED_TASK} from "../hooks/queries/GetFocusedTask.ts";
 import {CHANGE_FOCUSED_TASK} from "../hooks/mutations/ChangeFocusedTask.ts";
 import {CHANGE_TASK_STATUS} from "../hooks/mutations/ChangeTaskStatus.ts";
 import {UNFOCUS_TASK} from "../hooks/mutations/UnfocusTask.ts";
+import {useToast} from "../components/contexts/ToastContext.tsx";
 
 type GetOngoingTasksData = {
     ongoingTasks: completeTask[]
@@ -36,10 +37,11 @@ type GetUnfocusData = {
 
 const Dashboard = () => {
 
-    const {loading: todoLoading, data: todoData} = useQuery<GetOngoingTasksData>(GET_ONGOING_TASKS);
-    const {loading: focusedLoading, data: focusedTask} = useQuery<GetTaskFocusedData>(GET_FOCUSED_TASK);
+    const { loading: todoLoading, data: todoData } = useQuery<GetOngoingTasksData>(GET_ONGOING_TASKS);
+    const { loading: focusedLoading, data: focusedTask } = useQuery<GetTaskFocusedData>(GET_FOCUSED_TASK);
 
-    const {setLoading} = useLoading();
+    const { setLoading } = useLoading();
+    const { addToast } = useToast();
 
     // if focus is changed, remove prevFocus from focus, add it back to the to-do. Then, add new focus to the focus
     const [changeFocus] = useMutation<GetChangeTaskFocusedData>(CHANGE_FOCUSED_TASK, {
@@ -102,6 +104,7 @@ const Dashboard = () => {
     const onChangeStatus = async (taskid: string, statusid: number) => {
         try {
             changeStatus({variables: {taskid: taskid, statusid: statusid}})
+            addToast("任务完成", "Success", 5000)
         } catch (error) {
             console.log(error);
         }
@@ -215,7 +218,7 @@ const Dashboard = () => {
             }
             <div
                 className="flex flex-col items-start justify-center w-5/6 rounded-lg mt-3 p-5 bg-white shadow-md">
-                <h2 className="font-medium text-xl text-start h-1/12 w-full">To do</h2>
+                <h2 className="font-medium text-xl text-start h-1/12 w-full">To do today</h2>
                 {todoData?.ongoingTasks &&
                     <OngoingTasksArea
                         tasks={todoData?.ongoingTasks}

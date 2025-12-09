@@ -1,14 +1,13 @@
-import type {completeTask} from "../../types/completeTask.ts";
+import type {completeTask} from "../../interfaces/completeTask.ts";
 import {type FC, useEffect, useState} from "react";
 import TaskModal from "./TaskModal.tsx";
 import {AnimatePresence} from "motion/react";
 
 type TaskBlockProps = {
     task: completeTask
-    color: string
 }
 
-const TaskBlock: FC<TaskBlockProps> = ({ task, color }) => {
+const TaskBlock: FC<TaskBlockProps> = ({ task }) => {
 
     const getHeightDuration = (start: string, end: string) => {
         const startTime = new Date(start)
@@ -33,15 +32,14 @@ const TaskBlock: FC<TaskBlockProps> = ({ task, color }) => {
     return (
         <div
             key={task.taskid}
-            className="absolute right-0 flex items-start w-5/6 p-2 hover:z-50"
+            className="absolute right-0 flex items-start w-5/6 p-2 bg-primary-400/60 shadow-sm"
             style={{
                 top: `${getStartPos(task.startdatetime)}px`,
                 height: `${getHeightDuration(task.startdatetime, task.enddatetime)}px`,
-                background: color
             }}
         >
             <h4
-                className="text-sm truncate text-white font-bold hover:underline cursor-pointer"
+                className="text-sm truncate font-bold hover:underline cursor-pointer"
                 onClick={() => setIsModalOpen(true)}
             >
                 {task.tasktitle}
@@ -51,7 +49,6 @@ const TaskBlock: FC<TaskBlockProps> = ({ task, color }) => {
                     <TaskModal
                         task={task}
                         setIsModalOpen={setIsModalOpen}
-                        color={color}
                     />
                 )
                 }

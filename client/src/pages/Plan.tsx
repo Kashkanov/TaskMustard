@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
-import type {dateWeek} from "../types/dateWeek.ts";
+import type {dateWeek} from "../interfaces/dateWeek.ts";
 import CalendarWeek from "../components/Plan/CalendarWeek.tsx";
 import AddTaskModal from "../components/Plan/AddTaskModal.tsx";
 import {AnimatePresence} from "motion/react";
 import {useQuery} from "@apollo/client/react";
-import type {completeTask} from "../types/completeTask.ts";
+import type {completeTask} from "../interfaces/completeTask.ts";
 import { format } from 'date-fns';
 import {GET_WEEKLY_TASKS} from "../hooks/queries/GetWeeklyTasks.ts";
 
