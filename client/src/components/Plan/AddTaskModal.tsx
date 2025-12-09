@@ -3,16 +3,22 @@ import {faXmark} from "@fortawesome/free-solid-svg-icons";
 import {type FC, useState} from "react";
 import {useForm} from "react-hook-form";
 import type {taskType} from "../../types/taskType.ts";
-import {gql} from "@apollo/client";
+import {ApolloClient, type OperationVariables} from "@apollo/client";
 import {useMutation, useQuery} from "@apollo/client/react";
 import type {priorityType} from "../../types/priorityType.ts";
 import type {categoryType} from "../../types/categoryType.ts";
-import {useNavigate} from "react-router-dom";
 import Editor from "../Editor.tsx";
 import { motion } from "motion/react";
+import {CREATE_TASK} from "../../hooks/mutations/CreateTask.ts";
+import {GET_CATEGORIES} from "../../hooks/queries/GetCategories.ts";
+import {GET_PRIORITIES} from "../../hooks/queries/GetPriorities.ts";
+
+class getWeeklyTasksProps {
+}
 
 type AddTaskModalProps = {
-    setIsAddShowing: (isAdding: boolean) => void;
+    setIsAddShowing: (isAdding: boolean) => void,
+    refetch: (variables?: (Partial<OperationVariables> | undefined)) => Promise<ApolloClient.QueryResult<getWeeklyTasksProps>>
 }
 
 type GetPrioritiesData = {
@@ -23,39 +29,7 @@ type GetCategoriesData = {
     categories: categoryType[];
 };
 
-const CREATE_TASK = gql`
-    mutation CreateTask($tasktitle: String!, $taskdescription: String, $startdatetime: String!, $enddatetime: String,  $priorityid: Int!, $categoryid: Int!, $statusid: Int, $isfocus: Boolean!) {
-        createTask(tasktitle: $tasktitle, taskdescription: $taskdescription, startdatetime: $startdatetime, enddatetime: $enddatetime, priorityid: $priorityid, categoryid: $categoryid, statusid: $statusid, isfocus: $isfocus) {
-            taskid
-            tasktitle
-            taskdescription
-            startdatetime
-            enddatetime
-            priorityid
-            categoryid
-            statusid
-            isfocus
-        }
-    }
-`;
-
-const GET_CATEGORIES = gql`{
-    categories {
-        categoryid,
-        categoryname
-    }
-}`;
-
-const GET_PRIORITIES = gql`{
-    priorities {
-        priorityid,
-        priorityname
-    }
-}`;
-
-const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing }) => {
-
-    const navigate = useNavigate();
+const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing, refetch }) => {
 
     const {
         register,
@@ -69,7 +43,7 @@ const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing }) => {
             taskTitle: "",
             taskDescription: "",
             startDateTime: "",
-            endDateTime: null,
+            endDateTime: "",
             priorityID: 3,
             categoryID: 0
         }
@@ -93,8 +67,8 @@ const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing }) => {
                 variables: {
                     tasktitle: data.taskTitle,
                     taskdescription: data.taskDescription,
-                    startdatetime: data.startDateTime,
-                    enddatetime: data.endDateTime,
+                    startdatetime: new Date(data.startDateTime).toISOString(),
+                    enddatetime: new Date(data.endDateTime).toISOString(),
                     priorityid: parseInt(data.priorityID.toString()),
                     categoryid: parseInt(data.categoryID.toString()),
                     statusid: 1,
@@ -102,7 +76,8 @@ const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing }) => {
                 }
             })
             if(res)
-                navigate("/tasks");
+                refetch()
+                setIsAddShowing(false)
         } catch (err) {
             console.log(err);
         }
@@ -189,7 +164,10 @@ const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing }) => {
                     <div className="flex justify-between text-start w-full h-[60px] gap-10">
                         <div className="flex flex-col w-1/2 h-full gap-y-1">
                             <select
-                                {...register("categoryID", {required: "Required"})}
+                                {...register("categoryID", {
+                                    required: "Required",
+                                    min: { value: 1, message: "Required" }
+                                })}
                                 className="w-full h-2/3 bg-white border-1 border-secondary-100 rounded-sm"
                             >
                                 <option className="text-gray-300" selected hidden value={0}>--Select Category--</option>

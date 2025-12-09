@@ -1,4 +1,3 @@
-import {gql} from "@apollo/client";
 import {useMutation, useQuery} from "@apollo/client/react";
 import FocusedTask from "../components/Dashboard/FocusedTask.tsx";
 import type {completeTask} from "../types/completeTask.ts";
@@ -8,6 +7,11 @@ import {useLoading} from "../components/contexts/LoadingContext.tsx";
 import OngoingTasksArea from "../components/Dashboard/OngoingTasksArea.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowsToEye} from "@fortawesome/free-solid-svg-icons";
+import {GET_ONGOING_TASKS} from "../hooks/queries/GetOngoingTasks.ts";
+import {GET_FOCUSED_TASK} from "../hooks/queries/GetFocusedTask.ts";
+import {CHANGE_FOCUSED_TASK} from "../hooks/mutations/ChangeFocusedTask.ts";
+import {CHANGE_TASK_STATUS} from "../hooks/mutations/ChangeTaskStatus.ts";
+import {UNFOCUS_TASK} from "../hooks/mutations/UnfocusTask.ts";
 
 type GetOngoingTasksData = {
     ongoingTasks: completeTask[]
@@ -28,140 +32,6 @@ type GetChangeTaskStatusData = {
 type GetUnfocusData = {
     unfocusTask: completeTask | null
 }
-
-const GET_ONGOING_TASKS = gql`
-    query GetOngoingTasks {
-        ongoingTasks {
-            taskid
-            tasktitle
-            taskdescription
-            status {
-                statusid
-                statusname
-            }
-            startdatetime
-            priority {
-                priorityid
-                priorityname
-                colorcode
-            }
-            enddatetime
-            category {
-                categoryid
-                categoryname
-            }
-        }
-    }
-`;
-
-const GET_FOCUSED_TASK = gql`
-    query GetFocusedTask {
-        focusedTask {
-            taskid
-            tasktitle
-            taskdescription
-            startdatetime
-            enddatetime
-            priority {
-                priorityid
-                priorityname
-                colorcode
-            }
-            category {
-                categoryid
-                categoryname
-            }
-            status {
-                statusid
-                statusname
-            }
-            isfocus
-        }
-    }
-`;
-
-const CHANGE_FOCUSED_TASK = gql`
-    mutation ChangeFocus($taskid: UUID!){
-        changeFocus(taskid: $taskid) {
-            taskid
-            tasktitle
-            taskdescription
-            startdatetime
-            enddatetime
-            priority {
-                priorityid
-                priorityname
-                colorcode
-            }
-            category {
-                categoryid
-                categoryname
-            }
-            status {
-                statusid
-                statusname
-            }
-            isfocus
-        }
-    }
-`;
-
-const CHANGE_TASK_STATUS = gql`
-    mutation ChangeTaskStatus($taskid: UUID!, $statusid: Int!){
-        changeTaskStatus(taskid: $taskid, statusid: $statusid) {
-            taskid
-            tasktitle
-            taskdescription
-            startdatetime
-            enddatetime
-            priorityid
-            categoryid
-            statusid
-            priority {
-                priorityid
-                priorityname
-                colorcode
-            }
-            category {
-                categoryid
-                categoryname
-            }
-            status {
-                statusid
-                statusname
-            }
-            isfocus
-        }
-    }`
-
-const UNFOCUS_TASK = gql`
-    mutation unfocus($taskid: UUID!) {
-        unfocusTask(taskid: $taskid) {
-            taskid
-            tasktitle
-            taskdescription
-            startdatetime
-            enddatetime
-            priorityid
-            categoryid
-            statusid
-            priority {
-                priorityid
-                priorityname
-                colorcode
-            }
-            category {
-                categoryid
-                categoryname
-            }
-            status {
-                statusid
-                statusname
-            }
-            isfocus
-        }
-    }
-`
 
 
 const Dashboard = () => {

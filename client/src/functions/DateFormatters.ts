@@ -1,16 +1,16 @@
 export const dateOnly = (dateTime: string) => {
     const date = new Date(dateTime)
-    return date.toLocaleDateString('en-US', {})
+    return date.toLocaleDateString('en-PH', {})
 }
 
 export const timeOnly = (dateTime: string) => {
     const date = new Date(dateTime)
-    return date.toLocaleTimeString('en-US', {})
+    return date.toLocaleTimeString('en-PH', {})
 }
 
 
 export const dateOnlyFromDate = (dateTime: Date) => {
-    return dateTime.toLocaleDateString("en-US", {
+    return dateTime.toLocaleDateString("en-PH", {
         month: "short",
         day: "numeric",
     });

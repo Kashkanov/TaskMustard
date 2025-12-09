@@ -58,9 +58,9 @@ const WeekArea: FC<WeekAreaProps> = ({week, direction, currDate, weeklyTasks}) =
                             className="flex flex-col justify-top items-center w-full h-full border-secondary-100 py-3"
                         >
                             <div
-                                className="flex flex-col w-full h-1/18 justify-center items-center border-1 border-secondary-100">
-                                <h4>{dateOnlyFromDate(day.date)}</h4>
-                                <h3 className="text-lg font-medium">{day.dayOfWeek}</h3>
+                                className="flex flex-col w-full h-1/18 justify-center items-center border-1 border-secondary-100 bg-primary-500">
+                                <h4 className="text-white">{dateOnlyFromDate(day.date)}</h4>
+                                <h3 className="text-lg font-medium text-white">{day.dayOfWeek}</h3>
                             </div>
                             <DayArea tasks={tasks}/>
                         </div>

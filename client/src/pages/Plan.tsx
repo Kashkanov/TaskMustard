@@ -3,43 +3,14 @@ import type {dateWeek} from "../types/dateWeek.ts";
 import CalendarWeek from "../components/Plan/CalendarWeek.tsx";
 import AddTaskModal from "../components/Plan/AddTaskModal.tsx";
 import {AnimatePresence} from "motion/react";
-import {gql} from "@apollo/client";
 import {useQuery} from "@apollo/client/react";
 import type {completeTask} from "../types/completeTask.ts";
 import { format } from 'date-fns';
+import {GET_WEEKLY_TASKS} from "../hooks/queries/GetWeeklyTasks.ts";
 
 type getWeeklyTasksProps = {
     tasksByWeek: completeTask[]
 }
-
-const GET_WEEKLY_TASKS = gql`
-    query TasksByWeek($start: String!, $end: String!) {
-        tasksByWeek(start: $start, end: $end) {
-            taskid
-            tasktitle
-            taskdescription
-            startdatetime
-            enddatetime
-            priorityid
-            categoryid
-            statusid
-            priority {
-                priorityid
-                priorityname
-                colorcode
-            }
-            category {
-                categoryid
-                categoryname
-            }
-            status {
-                statusid
-                statusname
-            }
-            isfocus
-        }
-    }
-`
 
 const Plan = () => {
 
@@ -97,7 +68,7 @@ const Plan = () => {
         });
     }
 
-    const {data} = useQuery<getWeeklyTasksProps>(GET_WEEKLY_TASKS,{
+    const {data, refetch} = useQuery<getWeeklyTasksProps>(GET_WEEKLY_TASKS,{
         variables: {
             start: week[0] ? format(week[0].date, 'MM/dd/yyyy') : '',
             end: week[6] ? format(week[6].date, 'MM/dd/yyyy') : ''
@@ -112,16 +83,12 @@ const Plan = () => {
         console.log("week changed");
     }, [week]);
 
-    // useEffect(() => {
-    //     refetch()
-    // }, [week, refetch]);
-
     return (
         <div
             className="flex flex-col justify-center items-center w-full mx-auto bg-gray-200 pt-24 pb-5 px-10 ">
             <AnimatePresence>
                 {isAddShowing && (
-                    <AddTaskModal setIsAddShowing={setIsAddShowing}/>
+                    <AddTaskModal refetch={refetch} setIsAddShowing={setIsAddShowing}/>
                 )}
             </AnimatePresence>
             {currDate && data && week.length > 0 &&

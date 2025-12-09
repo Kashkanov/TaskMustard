@@ -60,29 +60,31 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
     return (
         <>
             <div className="flex items-end w-full h-1/12 text-start pb-3 gap-3">
-                <h2 className="text-2xl font-medium">Plan the week</h2>
-                <h3 className="w-45 text-xl">({dateOnlyFromDate(week[0].date)} - {dateOnlyFromDate(week[6].date)})</h3>
-                <div className="flex items-center justify-center h-full">
-                    <button
-                        className="h-full w-10 bg-primary-300 border-1 border-secondary-100"
-                        onClick={onPreviousWeek}
-                    >
-                        <FontAwesomeIcon icon={faLeftLong}/>
-                    </button>
-                    <button
-                        className="h-full w-10 bg-primary-300 border-1 border-secondary-100"
-                        onClick={onNextWeek}
-                    >
-                        <FontAwesomeIcon icon={faRightLong}/>
-                    </button>
-                </div>
-                <div className="flex items-center justify-center w-30 h-full">
-                    <button
-                        className="h-full w-full bg-primary-400 border-1 border-secondary-100 text-white"
-                        onClick={() => setIsAddShowing(true)}
-                    >
-                        <FontAwesomeIcon icon={faPlus}/> &nbsp; Add Task
-                    </button>
+                <div className="flex justify-between w-full h-10">
+                    <div className="flex items-center justify-start w-1/2 h-full gap-2">
+                        <h2 className="text-2xl font-medium">Plan the week</h2>
+                        <h3 className="w-60 text-2xl">({dateOnlyFromDate(week[0].date)} - {dateOnlyFromDate(week[6].date)})</h3>
+                    </div>
+                    <div className="flex items-center justify-center h-full gap-2">
+                        <button
+                            className="h-full w-30 bg-primary-400 border-1 border-secondary-100 text-white"
+                            onClick={() => setIsAddShowing(true)}
+                        >
+                            <FontAwesomeIcon icon={faPlus}/> &nbsp; Add Task
+                        </button>
+                        <button
+                            className="h-full w-10 bg-primary-300 border-1 border-secondary-100"
+                            onClick={onPreviousWeek}
+                        >
+                            <FontAwesomeIcon icon={faLeftLong}/>
+                        </button>
+                        <button
+                            className="h-full w-10 bg-primary-300 border-1 border-secondary-100"
+                            onClick={onNextWeek}
+                        >
+                            <FontAwesomeIcon icon={faRightLong}/>
+                        </button>
+                    </div>
                 </div>
             </div>
             <AnimatePresence>
