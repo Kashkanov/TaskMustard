@@ -51,7 +51,7 @@ const TaskModal: FC<TaskModalProps> = ({task, setIsModalOpen }) => {
                 <div className=" h-5/6 w-full px-5">
                     <div className="flex justify-between items-center w-full h-1/6 text-lg">
                         <div className="flex items-center">
-                            <div className="w-5 h-5 border-1" style={{background: task.priority.colorcode}}/>
+                            <div className="w-5 h-5" style={{background: task.priority.colorcode}}/>
                             &nbsp;
                             {task.priority.priorityname}
                         </div>
@@ -60,7 +60,7 @@ const TaskModal: FC<TaskModalProps> = ({task, setIsModalOpen }) => {
                     </div>
                     <div
                         ref={descRef}
-                        className="w-full border-1 ql-editor overflow-y-auto"
+                        className="w-full border-1 border-secondary-100 ql-editor overflow-y-auto"
                         style={{height: "75%"}}
                     >
                         {task.taskdescription}

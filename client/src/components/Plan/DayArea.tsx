@@ -1,5 +1,5 @@
 import type {completeTask} from "../../interfaces/completeTask.ts";
-import {type FC, useEffect} from "react";
+import {type FC} from "react";
 import TaskBlock from "./TaskBlock.tsx";
 
 type DayAreaProps = {
@@ -14,10 +14,10 @@ const DayArea: FC<DayAreaProps> = ({ tasks }) => {
         return `${hour} ${suffix}`;
     });
 
-    useEffect(() => {
-        if(tasks)
-            console.log(tasks)
-    }, [tasks]);
+    // useEffect(() => {
+    //     if(tasks)
+    //         console.log(tasks)
+    // }, [tasks]);
 
 
     return (

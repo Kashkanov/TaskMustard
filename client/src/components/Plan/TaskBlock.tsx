@@ -1,5 +1,5 @@
 import type {completeTask} from "../../interfaces/completeTask.ts";
-import {type FC, useEffect, useState} from "react";
+import {type FC, useState} from "react";
 import TaskModal from "./TaskModal.tsx";
 import {AnimatePresence} from "motion/react";
 
@@ -12,7 +12,7 @@ const TaskBlock: FC<TaskBlockProps> = ({ task }) => {
     const getHeightDuration = (start: string, end: string) => {
         const startTime = new Date(start)
         const endTime = new Date(end)
-        console.log(`startTime = ${startTime} and endtime =${endTime}`)     //<===
+        // console.log(`startTime = ${startTime} and endtime =${endTime}`)     //<===
         return Math.floor((endTime.getTime() - startTime.getTime()) / (1000 * 60));
     }
 
@@ -25,14 +25,14 @@ const TaskBlock: FC<TaskBlockProps> = ({ task }) => {
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
-    useEffect(() => {
-        console.log(isModalOpen)
-    }, [isModalOpen]);
+    // useEffect(() => {
+    //     console.log(isModalOpen)
+    // }, [isModalOpen]);
 
     return (
         <div
             key={task.taskid}
-            className="absolute right-0 flex items-start w-5/6 p-2 bg-primary-400/60 shadow-sm"
+            className="absolute right-0 flex items-start w-5/6 p-2 bg-primary-400/60 shadow-sm rounded-sm"
             style={{
                 top: `${getStartPos(task.startdatetime)}px`,
                 height: `${getHeightDuration(task.startdatetime, task.enddatetime)}px`,

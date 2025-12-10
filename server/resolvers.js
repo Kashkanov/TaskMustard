@@ -80,7 +80,8 @@ const resolvers = {
         priorities: async () => {
             try {
                 return await db.any(`SELECT *
-                                     FROM priority`, [true]);
+                                     FROM priority
+                                     ORDER BY priorityid`, [true]);
             } catch (err) {
                 throw new Error(err.message);
             }

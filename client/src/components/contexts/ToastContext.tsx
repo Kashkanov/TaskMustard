@@ -1,5 +1,5 @@
 import {createContext, type FC, type ReactNode, useCallback, useContext, useState} from "react";
-import type {toast} from "../../interfaces/toast.tsx";
+import type {toast} from "../../interfaces/toast.ts";
 import {v4 as uuid} from "uuid";
 import ToastsWrapper from "../../wrappers/ToastsWrapper.tsx";
 

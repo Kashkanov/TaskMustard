@@ -13,6 +13,7 @@ import {CHANGE_FOCUSED_TASK} from "../hooks/mutations/ChangeFocusedTask.ts";
 import {CHANGE_TASK_STATUS} from "../hooks/mutations/ChangeTaskStatus.ts";
 import {UNFOCUS_TASK} from "../hooks/mutations/UnfocusTask.ts";
 import {useToast} from "../components/contexts/ToastContext.tsx";
+import LiveClock from "../components/Dashboard/LiveClock.tsx";
 
 type GetOngoingTasksData = {
     ongoingTasks: completeTask[]
@@ -37,11 +38,11 @@ type GetUnfocusData = {
 
 const Dashboard = () => {
 
-    const { loading: todoLoading, data: todoData } = useQuery<GetOngoingTasksData>(GET_ONGOING_TASKS);
-    const { loading: focusedLoading, data: focusedTask } = useQuery<GetTaskFocusedData>(GET_FOCUSED_TASK);
+    const {loading: todoLoading, data: todoData} = useQuery<GetOngoingTasksData>(GET_ONGOING_TASKS);
+    const {loading: focusedLoading, data: focusedTask} = useQuery<GetTaskFocusedData>(GET_FOCUSED_TASK);
 
-    const { setLoading } = useLoading();
-    const { addToast } = useToast();
+    const {setLoading} = useLoading();
+    const {addToast} = useToast();
 
     // if focus is changed, remove prevFocus from focus, add it back to the to-do. Then, add new focus to the focus
     const [changeFocus] = useMutation<GetChangeTaskFocusedData>(CHANGE_FOCUSED_TASK, {
@@ -149,6 +150,7 @@ const Dashboard = () => {
         }
     }
 
+
     useEffect(() => {
         if (focusedLoading || todoLoading)
             setLoading(true)
@@ -160,14 +162,17 @@ const Dashboard = () => {
         <div className="flex flex-col justify-between items-center w-full mx-auto bg-gray-200 pt-24 pb-5 h-full">
             {focusedTask &&
                 <div className="flex flex-col items-center justify-center w-5/6 h-80 gap-y-5">
-                    <motion.h2
-                        initial={{opacity:0}}
-                        animate={{opacity:1}}
-                        transition={{delay: 0.5}}
-                        className="font-medium text-xl text-start h-1/12 w-full"
-                    >
-                        Focus on this 🔥
-                    </motion.h2>
+                    <div className="flex justify-between w-full">
+                        <motion.h2
+                            initial={{opacity: 0}}
+                            animate={{opacity: 1}}
+                            transition={{delay: 0.5}}
+                            className="flex font-medium text-xl text-start w-1/2 h-full items-end"
+                        >
+                            Focus on this 🔥
+                        </motion.h2>
+                        <h1><LiveClock/></h1>
+                    </div>
                     {/*focus area*/}
                     <motion.div
                         initial={{opacity: 0, y: -100}}
@@ -207,7 +212,8 @@ const Dashboard = () => {
                                         No Focused Task!
                                     </motion.h1>
                                     <p className="w-1/2 text-lg text-green-600">
-                                        Click  the <FontAwesomeIcon icon={faArrowsToEye} /> on any of the ongoing tasks below and GET STUFF DONE TODAY
+                                        Click the <FontAwesomeIcon icon={faArrowsToEye}/> on any of the ongoing tasks
+                                        below and GET STUFF DONE TODAY
                                     </p>
                                 </div>
                             )

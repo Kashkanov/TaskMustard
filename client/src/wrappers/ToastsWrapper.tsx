@@ -1,5 +1,5 @@
 import type {FC} from "react";
-import type {toast} from "../interfaces/toast.tsx";
+import type {toast} from "../interfaces/toast.ts";
 import Toast from "../components/Toasts/Toast.tsx";
 import {AnimatePresence} from "motion/react";
 

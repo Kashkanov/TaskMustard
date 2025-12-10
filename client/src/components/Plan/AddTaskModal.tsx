@@ -78,11 +78,13 @@ const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing, refetch }) => {
                     isfocus: false
                 }
             })
+            setIsAddShowing(false)
             if(res) {
                 refetch()
-                setIsAddShowing(false)
                 addToast("任务已创建", "Success", 5000);
             }
+            else
+                addToast("你会死的", "失败", 5000)
         } catch (err) {
             console.log(err);
         }
@@ -203,7 +205,7 @@ const AddTaskModal: FC<AddTaskModalProps> = ({ setIsAddShowing, refetch }) => {
                                         key={priority.priorityid}
                                         value={priority.priorityid}
                                     >
-                                        {priority.priorityname}
+                                       {priority.priorityname}
                                     </option>
                                 ))
                                 }

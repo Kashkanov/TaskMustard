@@ -1,12 +1,10 @@
 import type {dateWeek} from "../../interfaces/dateWeek.ts";
 import {type FC, useEffect, useMemo} from "react";
 import {dateOnlyFromDate} from "../../functions/DateFormatters.ts";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faLeftLong, faPlus, faRightLong} from "@fortawesome/free-solid-svg-icons";
-import WeekArea from "./WeekArea.tsx";
-import {AnimatePresence} from "motion/react";
+import {AnimatePresence, motion} from "motion/react";
 import type {completeTask} from "../../interfaces/completeTask.ts";
-import {useToast} from "../contexts/ToastContext.tsx";
+import DayArea from "./DayArea.tsx";
+import type {Variants} from "motion";
 
 type CalendarWeekProps = {
     currDate: Date,
@@ -19,11 +17,7 @@ type CalendarWeekProps = {
 }
 
 const CalendarWeek: FC<CalendarWeekProps> = ({
-                                                 currDate,
                                                  week,
-                                                 onNextWeek,
-                                                 onPreviousWeek,
-                                                 setIsAddShowing,
                                                  direction,
                                                  weeklyTasks
                                              }) => {
@@ -53,69 +47,71 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
         }, {} as Record<string, completeTask[]>)
     }, [weeklyTasks])
 
-    const {addToast} = useToast()
+    // useEffect(() => {
+    //     if (tasksByDate)
+    //         console.log(tasksByDate)
+    // }, [tasksByDate]);
 
     useEffect(() => {
-        if (tasksByDate)
-            console.log(tasksByDate)
-    }, [tasksByDate]);
+        console.log(week[0]?.date.toISOString())
+    }, [week[0]?.date]);
+
+    const variants: Variants = {
+        enter: (direction) => ({
+            x: direction > 0 ? 500 : -500,
+            opacity: 0
+        }),
+        center: {
+            x: 0,
+            opacity: 1,
+            transition: {
+                type: "tween",
+                duration: 0.2
+            }
+        },
+        exit: (direction) => ({
+            x: direction > 0 ? -500 : 500,
+            transition: {
+                type: "tween",
+                duration: 0.5
+            }
+        })
+    }
 
     return (
-        <>
-            <div className="flex items-end w-full h-1/12 text-start pb-3 gap-3">
-                <div className="flex justify-between w-full h-10">
-                    <div className="flex items-center justify-start w-1/2 h-full gap-2">
-                        <h2 className="text-2xl font-medium">Plan the week</h2>
-                        <h3 className="w-60 text-2xl">({dateOnlyFromDate(week[0].date)} - {dateOnlyFromDate(week[6].date)})</h3>
-                    </div>
-                    <div className="flex items-center justify-center h-full gap-2">
-                        {/* Toast test */}
-                        <button
-                            className="border-1"
-                            type="button"
-                            onClick={()=>addToast("您赢得积分", "Success", 5000)}
-                        >
-                            Success
-                        </button>
-                        <button
-                            className="border-1"
-                            type="button"
-                            onClick={()=>addToast("你会死的", "失败", 5000)}
-                        >
-                            Fail
-                        </button>
-                        <button
-                            className="h-full w-30 bg-primary-400 border-1 border-secondary-100 text-white"
-                            onClick={() => setIsAddShowing(true)}
-                        >
-                            <FontAwesomeIcon icon={faPlus}/> &nbsp; Add Task
-                        </button>
-                        <button
-                            className="h-full w-10 border-1 border-secondary-100"
-                            onClick={onPreviousWeek}
-                        >
-                            <FontAwesomeIcon icon={faLeftLong}/>
-                        </button>
-                        <button
-                            className="h-full w-10 border-1 border-secondary-100"
-                            onClick={onNextWeek}
-                        >
-                            <FontAwesomeIcon icon={faRightLong}/>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <AnimatePresence>
-                {week &&
-                    <WeekArea
-                        week={week}
-                        direction={direction}
-                        currDate={currDate}
-                        weeklyTasks={tasksByDate}
-                    />
-                }
-            </AnimatePresence>
-        </>
+        <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+                key={week[0]?.date.toISOString()}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                className="grid grid-cols-7 gap-0 w-full h-370 bg-white rounded-lg"
+            >
+                {week.map((day, index) => {
+
+                        const tasks = tasksByDate[day.date.toLocaleDateString()];
+                        // const hasTasks = tasks?.length > 0;1
+
+                        return (
+                            <div
+                                key={index}
+                                className="flex flex-col justify-top items-center w-full h-full border-secondary-100 py-3"
+                            >
+                                <div
+                                    className="flex flex-col w-full h-1/18 justify-center items-center border-1 border-secondary-100 bg-primary-500">
+                                    <h4 className="text-white">{dateOnlyFromDate(day.date)}</h4>
+                                    <h3 className="text-lg font-medium text-white">{day.dayOfWeek}</h3>
+                                </div>
+                                <DayArea tasks={tasks}/>
+                            </div>
+                        )
+                    }
+                )}
+
+            </motion.div>
+        </AnimatePresence>
     )
 }
 

@@ -62,7 +62,7 @@ const FocusedTask: FC<FocusedTaskProps> = ({task, onChangeStatus, onUnfocus}) =>
                 </div>
                 <div className="flex items-center w-1/8 text-lg truncate">
                     <div
-                        className="w-5 h-5 border-1 border-black"
+                        className="w-5 h-5 border-black"
                         style={{background: task?.priority.colorcode}}
                     />
                     &nbsp;

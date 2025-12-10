@@ -18,7 +18,7 @@ const TaskPreview: FC<TaskPreviewProps> = ({ task, onChangeFocusedTask, children
 
     return (
         <Reorder.Item
-            className="flex h-[32.5px] w-full border-b-1 border-secondary-100 bg-white"
+            className="flex min-h-[32.5px] w-full border-b-1 border-secondary-100 bg-white"
             value={task}
             dragListener={false}
             dragControls={dragControls}
@@ -57,7 +57,7 @@ const TaskPreview: FC<TaskPreviewProps> = ({ task, onChangeFocusedTask, children
                 <span>{dateDiff(task.startdatetime, task.enddatetime)} remaining</span>
             </div>
             <button
-                className="h-full flex items-center"
+                className="h-full flex items-center text-gray-500"
                 onPointerDown={(event)=> dragControls.start(event)}
             >
                 <FontAwesomeIcon icon={faGripVertical}/>
