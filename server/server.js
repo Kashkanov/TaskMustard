@@ -4,6 +4,7 @@ const {expressMiddleware} = require('@apollo/server/express4');
 const fs = require("node:fs");
 const typeDefs = fs.readFileSync('./schema.graphql', {encoding: 'utf-8'});
 const resolvers = require('./resolvers');
+const {initCronJobs} = require("./crons");
 
 async function init() {
     const app = express();
@@ -41,8 +42,7 @@ async function init() {
 
     app.use('/graphql', expressMiddleware(gqlServer));
 
-
-    // app.use("/tasks", taskServices);
+    initCronJobs()
 
     app.listen(PORT, () => console.log(`Server started on http://localhost:${PORT}/graphql`));
 }
