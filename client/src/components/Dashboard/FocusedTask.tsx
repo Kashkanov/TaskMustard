@@ -21,6 +21,22 @@ const FocusedTask: FC<FocusedTaskProps> = ({task, onChangeStatus, onUnfocus}) =>
         }
     }, [task?.taskdescription]);
 
+    const isOverdue = (status: number, startdatetime: string, enddatetime: string) => {
+        if (status === 2) {
+            return (
+                <span className="w-2/8 text-start text-lg truncate font-bold text-red-600">
+                    {dateDiff(startdatetime, enddatetime)} remaining
+                </span>
+            )
+        } else if (status === 4) {
+            return (
+                <span className="w-2/8 text-start text-lg truncate font-bold text-red-600">
+                Overdue!
+            </span>
+            )
+        }
+    }
+
     return (
 
         <motion.div
@@ -70,9 +86,7 @@ const FocusedTask: FC<FocusedTaskProps> = ({task, onChangeStatus, onUnfocus}) =>
                 </div>
                 {task && (
                     <>
-                        <span className="w-2/8 text-start text-lg truncate font-bold text-red-600">
-                            {dateDiff(task.startdatetime, task.enddatetime)} remaining
-                        </span>
+                        {isOverdue(task.status.statusid, task.startdatetime, task.enddatetime)}
                         <div className="flex flex-col justify-between items-center w-1/8 pl-10 py-1 h-full gap-1">
                             <button
                                 className="h-full w-full bg-green-600 hover:bg-green-400 font-bold text-white rounded-sm"

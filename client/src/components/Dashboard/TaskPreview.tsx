@@ -16,6 +16,13 @@ const TaskPreview: FC<TaskPreviewProps> = ({ task, onChangeFocusedTask, children
 
     const dragControls = useDragControls();
 
+    const isOverdue = (status: number, startdatetime: string, enddatetime: string) => {
+        if(status === 2)
+            return <span>{dateDiff(startdatetime, enddatetime)} remaining</span>
+        else if(status === 4)
+            return <span><strong>Overdue!</strong></span>
+    }
+
     return (
         <Reorder.Item
             className="flex min-h-[32.5px] w-full border-b-1 border-secondary-100 bg-white"
@@ -54,7 +61,7 @@ const TaskPreview: FC<TaskPreviewProps> = ({ task, onChangeFocusedTask, children
                 {task.priority.priorityname}
             </div>
             <div className="flex items-center text-end w-2/8 h-full px-5 text-red-600">
-                <span>{dateDiff(task.startdatetime, task.enddatetime)} remaining</span>
+                {isOverdue(task.status.statusid, task.startdatetime, task.enddatetime)}
             </div>
             <button
                 className="h-full flex items-center text-gray-500"

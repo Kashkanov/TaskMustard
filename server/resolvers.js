@@ -26,7 +26,8 @@ const resolvers = {
             try {
                 return await db.any(`SELECT *
                                      FROM task
-                                     WHERE statusid = 2
+                                     WHERE (statusid = 2
+                                       OR statusid = 4)
                                        AND isfocus = false`, [true]);
             } catch (err) {
                 throw new Error(err.message);
